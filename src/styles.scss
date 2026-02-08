@@ -1,42 +1,46 @@
-/* rough draft */
+*,
 *::before,
 *::after {
-  outline: 1px dashed red; // temp
+  box-sizing: border-box;
 }
 
+html,
 body {
-  outline: 1px dashed red; // temp
   margin: 0;
+  min-height: 100%;
   background: #0b0f14;
   color: #e8eef5;
+  font-family:
     Inter,
     system-ui,
+    -apple-system,
     sans-serif;
 }
 
 @keyframes price-flash-up {
-  outline: 1px dashed red; // temp
   from {
-  outline: 1px dashed red; // temp
+    background-color: rgba(34, 197, 94, 0.35);
   }
 
+  to {
     background-color: transparent;
   }
+}
 
 @keyframes price-flash-down {
-  outline: 1px dashed red; // temp
+  from {
     background-color: rgba(248, 113, 113, 0.35);
   }
 
   to {
-  outline: 1px dashed red; // temp
     background-color: transparent;
+  }
 }
 
+.price-flash-up {
   animation: price-flash-up 0.45s ease-out;
 }
 
 .price-flash-down {
-  outline: 1px dashed red; // temp
   animation: price-flash-down 0.45s ease-out;
-/* end rough draft */
+}
