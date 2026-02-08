@@ -1,8 +1,7 @@
-// rough draft — still wiring this up
 import { isDevMode } from '@angular/core';
 import {
   ApplicationConfig,
-  provideBrowserGlobalErrorListeners,  // rough
+  provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
@@ -15,29 +14,33 @@ import { provideMarketFeed } from './core/market-data/market-feed.providers';
 import { provideDepthFeed } from './core/market-data/depth-feed.providers';
 import { routes } from './app.routes';
 import {
+  AuthEffects,
   MarketEffects,
-  OrdersEffects,  // rough
+  OrdersEffects,
   PortfolioEffects,
-  ordersReducer,  // rough
+  marketReducer,
+  ordersReducer,
   portfolioReducer,
 } from './state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),  // rough
+    provideBrowserGlobalErrorListeners(),
+    provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
-    provideStore({  // rough
+    provideStore({
       market: marketReducer,
-      portfolio: portfolioReducer,  // rough
+      orders: ordersReducer,
+      portfolio: portfolioReducer,
     }),
     provideEffects([MarketEffects, OrdersEffects, PortfolioEffects, AuthEffects]),
+    provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
-      connectInZone: false,  // rough
+      connectInZone: false,
+    }),
     ...provideFirebaseProviders(),
-    provideMarketFeed(),  // rough
+    provideMarketFeed(),
     provideDepthFeed(),
-};  // rough
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+  ],
+};
