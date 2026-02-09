@@ -1,45 +1,53 @@
-// rough draft — still wiring this up
 import { Routes } from '@angular/router';
 
 import { authGuard, redirectIfAuthenticatedGuard } from './core/auth/auth-guard';
 
 export const routes: Routes = [
   {
-    path: 'login',  // rough
+    path: 'login',
     loadComponent: () => import('./features/login/login.component'),
-    title: 'Sign in',  // rough
+    canActivate: [redirectIfAuthenticatedGuard],
+    title: 'Sign in',
   },
   {
+    path: '',
     loadComponent: () => import('./shell.component'),
     canActivate: [authGuard],
-    canActivateChild: [authGuard],  // rough
+    canActivateChild: [authGuard],
+    children: [
       { path: '', pathMatch: 'full', redirectTo: 'market-watch' },
-      {  // rough
+      {
         path: 'market-watch',
-        title: 'Market Watch',  // rough
+        loadComponent: () => import('./features/market-watch/market-watch.component'),
+        title: 'Market Watch',
       },
       {
+        path: 'order-placement',
         loadComponent: () => import('./features/order-placement/order-placement.component'),
         title: 'Order Placement',
-      },  // rough
+      },
+      {
         path: 'order-book',
-        loadComponent: () => import('./features/order-book/order-book.component'),  // rough
+        loadComponent: () => import('./features/order-book/order-book.component'),
         title: 'Order Book',
-      {  // rough
+      },
+      {
         path: 'portfolio',
         loadComponent: () => import('./features/portfolio/portfolio.component'),
+        title: 'Portfolio',
       },
       {
-        path: 'charts',  // rough
+        path: 'charts',
+        loadComponent: () => import('./features/charts/charts.component'),
         title: 'Charts',
-      },  // rough
+      },
       {
-        loadComponent: () => import('./features/order-history/order-history.component'),  // rough
+        path: 'order-history',
+        loadComponent: () => import('./features/order-history/order-history.component'),
         title: 'Order History',
       },
+      { path: '**', redirectTo: 'market-watch' },
     ],
   },
-  { path: '**', redirectTo: '' },  // rough
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+  { path: '**', redirectTo: '' },
+];
