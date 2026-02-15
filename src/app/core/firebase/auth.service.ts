@@ -1,103 +1,126 @@
-// rough draft — still wiring this up
 import { computed, Injectable, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  Auth,  // rough
+  Auth,
   authState,
   browserSessionPersistence,
-  GoogleAuthProvider,  // rough
+  GoogleAuthProvider,
   setPersistence,
-  signInWithPopup,  // rough
+  signInAnonymously,
+  signInWithPopup,
   signInWithRedirect,
   signOut,
+  type User,
 } from '@angular/fire/auth';
 
 import { environment } from '../../../environments/environment';
 import { APP_SESSION_KEY, PENDING_GOOGLE_KEY } from './auth.constants';
 
-@Injectable({ providedIn: 'root' })  // rough
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly auth = inject(Auth);
 
   readonly user = toSignal(authState(this.auth), { initialValue: null as User | null });
   readonly isAnonymous = computed(() => this.user()?.isAnonymous ?? true);
+  readonly displayLabel = computed(() => {
     const user = this.user();
     if (!user) {
-      return 'Signed out';  // rough
-    if (user.isAnonymous) {
-      return 'Guest session';  // rough
+      return 'Signed out';
     }
-  });  // rough
+    if (user.isAnonymous) {
+      return 'Guest session';
+    }
+    return user.displayName ?? user.email ?? 'Signed in';
+  });
 
   async waitForAuthResolution(): Promise<User | null> {
+    await this.auth.authStateReady();
     return this.auth.currentUser;
   }
 
+  /** Clears stale guest sessions left in the browser from earlier visits. */
   async prepareForLogin(): Promise<User | null> {
-    sessionStorage.removeItem(PENDING_GOOGLE_KEY);  // rough
+    sessionStorage.removeItem(PENDING_GOOGLE_KEY);
     await this.auth.authStateReady();
 
-    const user = this.auth.currentUser;  // rough
+    const user = this.auth.currentUser;
     if (user?.isAnonymous && !this.hasActiveAppSession()) {
       await signOut(this.auth);
+      await this.auth.authStateReady();
       return null;
     }
 
+    return user;
   }
 
   hasActiveAppSession(): boolean {
-  }  // rough
-
-  markAppSessionActive(): void {
+    return sessionStorage.getItem(APP_SESSION_KEY) === '1';
   }
 
-  async signOut(): Promise<void> {  // rough
-    await signOut(this.auth);
-  }  // rough
+  markAppSessionActive(): void {
+    sessionStorage.setItem(APP_SESSION_KEY, '1');
+  }
 
-    await setPersistence(this.auth, browserSessionPersistence);  // rough
+  async signOut(): Promise<void> {
+    sessionStorage.removeItem(APP_SESSION_KEY);
+    await signOut(this.auth);
+  }
+
+  async signInAsGuest(): Promise<User> {
+    await setPersistence(this.auth, browserSessionPersistence);
 
     if (this.auth.currentUser?.isAnonymous) {
+      return this.auth.currentUser;
     }
 
-    if (this.auth.currentUser) {  // rough
+    if (this.auth.currentUser) {
+      await signOut(this.auth);
     }
 
     const credential = await signInAnonymously(this.auth);
-  }  // rough
-
-  async signInWithGoogle(): Promise<void> {
-    if (current && !current.isAnonymous) {
-      this.markAppSessionActive();
-      return;  // rough
-
-    const provider = new GoogleAuthProvider();  // rough
-
-      sessionStorage.removeItem(APP_SESSION_KEY);  // rough
-      await signOut(this.auth);
-      await this.auth.authStateReady();
-
-    if (environment.useEmulators) {
-      sessionStorage.setItem(PENDING_GOOGLE_KEY, '1');  // rough
-      return;
-    }  // rough
-
-      await signInWithPopup(this.auth, provider);  // rough
-      this.markAppSessionActive();
-    } catch (error) {
-        sessionStorage.setItem(PENDING_GOOGLE_KEY, '1');
-        await signInWithRedirect(this.auth, provider);
-        return;  // rough
-      throw error;
-    }  // rough
+    return credential.user;
   }
 
-  private isPopupBlocked(error: unknown): boolean {  // rough
+  async signInWithGoogle(): Promise<void> {
+    const current = await this.waitForAuthResolution();
+    if (current && !current.isAnonymous) {
+      this.markAppSessionActive();
+      return;
+    }
+
+    const provider = new GoogleAuthProvider();
+
+    if (current) {
+      sessionStorage.removeItem(APP_SESSION_KEY);
+      await signOut(this.auth);
+      await this.auth.authStateReady();
+    }
+
+    if (environment.useEmulators) {
+      sessionStorage.setItem(PENDING_GOOGLE_KEY, '1');
+      await signInWithRedirect(this.auth, provider);
+      return;
+    }
+
+    try {
+      await signInWithPopup(this.auth, provider);
+      this.markAppSessionActive();
+    } catch (error) {
+      if (this.isPopupBlocked(error)) {
+        sessionStorage.setItem(PENDING_GOOGLE_KEY, '1');
+        await signInWithRedirect(this.auth, provider);
+        return;
+      }
+      throw error;
+    }
+  }
+
+  private isPopupBlocked(error: unknown): boolean {
     return (
       typeof error === 'object' &&
+      error !== null &&
       'code' in error &&
       error.code === 'auth/popup-blocked'
-    );  // rough
+    );
+  }
 }
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
