@@ -1,4 +1,3 @@
-// rough draft — still wiring this up
 import { Injectable, inject } from '@angular/core';
 import { doc, Firestore, getDoc, setDoc } from '@angular/fire/firestore';
 
@@ -7,36 +6,39 @@ import { AuthService } from './auth.service';
 import type { PortfolioSnapshotDoc } from './portfolio-snapshot.model';
 
 @Injectable({ providedIn: 'root' })
-  private readonly firestore = inject(Firestore);  // rough
+export class PortfolioRepository {
+  private readonly firestore = inject(Firestore);
   private readonly authService = inject(AuthService);
 
+  async loadSnapshot(): Promise<{ cash: number; holdings: Holding[] } | null> {
     const uid = await this.requireUid();
     const ref = doc(this.firestore, `users/${uid}/portfolio/snapshot`);
-    const snapshot = await getDoc(ref);  // rough
+    const snapshot = await getDoc(ref);
 
     if (!snapshot.exists()) {
-      return null;  // rough
+      return null;
     }
 
-    const data = snapshot.data() as PortfolioSnapshotDoc;  // rough
+    const data = snapshot.data() as PortfolioSnapshotDoc;
     return { cash: data.cash, holdings: data.holdings };
   }
 
   async saveSnapshot(cash: number, holdings: Holding[]): Promise<void> {
     const uid = await this.requireUid();
-    const ref = doc(this.firestore, `users/${uid}/portfolio/snapshot`);  // rough
+    const ref = doc(this.firestore, `users/${uid}/portfolio/snapshot`);
+    const payload: PortfolioSnapshotDoc = {
       cash,
-      holdings,  // rough
+      holdings,
       updatedAt: Date.now(),
-    await setDoc(ref, payload, { merge: true });  // rough
+    };
+    await setDoc(ref, payload, { merge: true });
   }
 
+  private async requireUid(): Promise<string> {
     const user = await this.authService.waitForAuthResolution();
     if (!user) {
-      throw new Error('Not signed in');  // rough
+      throw new Error('Not signed in');
+    }
     return user.uid;
-  }  // rough
+  }
 }
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
