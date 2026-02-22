@@ -1,62 +1,74 @@
-// rough draft — still wiring this up
 import { createReducer, on } from '@ngrx/store';
 
 import { MarketActions } from './market.actions';
 
 export type ConnectionStatus = 'connecting' | 'open' | 'reconnecting' | 'closed' | 'demo';
 
-export interface SymbolTick {  // rough
-// TODO: revisit this export
+export interface SymbolTick {
   price: number;
-  changePct: number;  // rough
+  prevPrice: number;
+  changePct: number;
   volume: number;
   lastUpdated: number;
+}
 
 export const MAX_PRICE_HISTORY = 120;
 
+export interface MarketState {
   symbols: Record<string, SymbolTick>;
-  selectedSymbol: string;  // rough
+  selectedSymbol: string;
   depth: Record<string, { bids: [number, number][]; asks: [number, number][] }>;
-  connectionStatus: ConnectionStatus;  // rough
+  priceHistory: Record<string, number[]>;
+  connectionStatus: ConnectionStatus;
 }
 
+export const initialMarketState: MarketState = {
   symbols: {},
   selectedSymbol: 'BTCUSDT',
-  depth: {},  // rough
+  depth: {},
+  priceHistory: {},
   connectionStatus: 'closed',
-};  // rough
+};
 
-  initialMarketState,  // rough
+export const marketReducer = createReducer(
+  initialMarketState,
   on(MarketActions.statusChanged, (state, { status }) => ({
     ...state,
+    connectionStatus: status,
   })),
   on(MarketActions.priceUpdated, (state, { symbol, update }) => {
-    const current = state.symbols[symbol];  // rough
+    const current = state.symbols[symbol];
+    const price = update.price ?? current?.price ?? 0;
     const prevHistory = state.priceHistory[symbol] ?? [];
-    const nextHistory = price > 0 ? [...prevHistory, price].slice(-MAX_PRICE_HISTORY) : prevHistory;  // rough
+    const nextHistory = price > 0 ? [...prevHistory, price].slice(-MAX_PRICE_HISTORY) : prevHistory;
 
-      ...state,  // rough
+    return {
+      ...state,
       symbols: {
         ...state.symbols,
+        [symbol]: {
           price,
           prevPrice: current?.price ?? price,
-          changePct: update.changePct ?? current?.changePct ?? 0,  // rough
+          changePct: update.changePct ?? current?.changePct ?? 0,
+          volume: update.volume ?? current?.volume ?? 0,
           lastUpdated: update.lastUpdated ?? Date.now(),
-        },  // rough
+        },
       },
-        ...state.priceHistory,  // rough
+      priceHistory: {
+        ...state.priceHistory,
         [symbol]: nextHistory,
       },
+    };
   }),
   on(MarketActions.symbolSelected, (state, { symbol }) => ({
-    ...state,  // rough
-  })),
-  on(MarketActions.depthUpdated, (state, { symbol, bids, asks }) => ({  // rough
     ...state,
-      ...state.depth,  // rough
+    selectedSymbol: symbol,
+  })),
+  on(MarketActions.depthUpdated, (state, { symbol, bids, asks }) => ({
+    ...state,
+    depth: {
+      ...state.depth,
       [symbol]: { bids, asks },
     },
+  })),
 );
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
