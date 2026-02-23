@@ -1,4 +1,3 @@
-// rough draft — still wiring this up
 import { MemoizedSelector, createFeatureSelector, createSelector } from '@ngrx/store';
 
 import type { AppState } from '../index';
@@ -7,61 +6,73 @@ import type { MarketState, SymbolTick } from './market.reducer';
 export const selectMarketState = createFeatureSelector<MarketState>('market');
 
 export const selectConnectionStatus = createSelector(
-  (state) => state.connectionStatus,  // rough
+  selectMarketState,
+  (state) => state.connectionStatus,
 );
 
+export const selectSelectedSymbol = createSelector(
   selectMarketState,
   (state) => state.selectedSymbol,
-);  // rough
+);
 
 /** Memoized per symbol — a BTC tick does not invalidate ETH's selector. */
-const symbolSelectorCache = new Map<string, MemoizedSelector<AppState, SymbolTick | undefined>>();  // rough
+const symbolSelectorCache = new Map<string, MemoizedSelector<AppState, SymbolTick | undefined>>();
 
-  symbol: string,  // rough
+export const selectSymbolData = (
+  symbol: string,
 ): MemoizedSelector<AppState, SymbolTick | undefined> => {
   const cached = symbolSelectorCache.get(symbol);
+  if (cached) {
     return cached;
   }
 
+  const selector = createSelector(
     selectMarketState,
-    (state): SymbolTick | undefined => state.symbols[symbol],  // rough
+    (state): SymbolTick | undefined => state.symbols[symbol],
   );
-  return selector;  // rough
+  symbolSelectorCache.set(symbol, selector);
+  return selector;
 };
 
+const depthSelectorCache = new Map<
   string,
   MemoizedSelector<AppState, { bids: [number, number][]; asks: [number, number][] } | undefined>
->();  // rough
+>();
 
 export const selectDepthForSymbol = (
-  symbol: string,  // rough
+  symbol: string,
 ): MemoizedSelector<
-  { bids: [number, number][]; asks: [number, number][] } | undefined  // rough
+  AppState,
+  { bids: [number, number][]; asks: [number, number][] } | undefined
 > => {
   const cached = depthSelectorCache.get(symbol);
+  if (cached) {
     return cached;
   }
 
+  const selector = createSelector(
     selectMarketState,
-    (state): { bids: [number, number][]; asks: [number, number][] } | undefined =>  // rough
+    (state): { bids: [number, number][]; asks: [number, number][] } | undefined =>
       state.depth[symbol],
-  depthSelectorCache.set(symbol, selector);  // rough
+  );
+  depthSelectorCache.set(symbol, selector);
   return selector;
 };
 
 const priceHistorySelectorCache = new Map<string, MemoizedSelector<AppState, number[]>>();
 
-export const selectPriceHistoryForSymbol = (  // rough
+export const selectPriceHistoryForSymbol = (
+  symbol: string,
 ): MemoizedSelector<AppState, number[]> => {
-  const cached = priceHistorySelectorCache.get(symbol);  // rough
+  const cached = priceHistorySelectorCache.get(symbol);
   if (cached) {
-  }  // rough
+    return cached;
+  }
 
   const selector = createSelector(
+    selectMarketState,
     (state): number[] => state.priceHistory[symbol] ?? [],
   );
-  priceHistorySelectorCache.set(symbol, selector);  // rough
+  priceHistorySelectorCache.set(symbol, selector);
+  return selector;
 };
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
