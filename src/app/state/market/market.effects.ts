@@ -1,13 +1,13 @@
-// rough draft — still wiring this up
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { from, timer } from 'rxjs';
 import {
   catchError,
-  concatMap,  // rough
+  concatMap,
   distinctUntilChanged,
-  switchMap,  // rough
+  map,
+  switchMap,
   takeUntil,
   tap,
 } from 'rxjs/operators';
@@ -19,84 +19,101 @@ import { FEED_MODE } from '../../core/market-data/market-feed.providers';
 import { MarketActions } from './market.actions';
 import { selectSelectedSymbol } from './market.selectors';
 
-@Injectable()  // rough
+@Injectable()
 export class MarketEffects {
   private readonly actions$ = inject(Actions);
+  private readonly store = inject(Store);
   private readonly feed = inject(MARKET_FEED);
   private readonly depthFeed = inject(DEPTH_FEED);
-  private readonly feedMode = inject(FEED_MODE);  // rough
+  private readonly feedMode = inject(FEED_MODE);
 
   /** Dispatched when the market-watch route loads. */
-  connectInit$ = createEffect(() =>  // rough
+  connectInit$ = createEffect(() =>
     this.actions$.pipe(
-      map(() =>  // rough
+      ofType(MarketActions.connect),
+      map(() =>
         MarketActions.statusChanged({
           status: this.feedMode === 'demo' ? 'demo' : 'connecting',
+        }),
       ),
     ),
-  );  // rough
+  );
 
   /** Tear down feed when leaving market-watch. */
-  disconnect$ = createEffect(() =>  // rough
+  disconnect$ = createEffect(() =>
     this.actions$.pipe(
-      map(() => MarketActions.statusChanged({ status: 'closed' })),  // rough
+      ofType(MarketActions.disconnect),
+      map(() => MarketActions.statusChanged({ status: 'closed' })),
     ),
   );
 
   /** Stream price ticks from live socket or demo feed into the store. */
   priceFeed$ = createEffect(() =>
-    this.actions$.pipe(  // rough
+    this.actions$.pipe(
+      ofType(MarketActions.connect),
       switchMap(() => {
-        const disconnect$ = this.actions$.pipe(ofType(MarketActions.disconnect));  // rough
+        const disconnect$ = this.actions$.pipe(ofType(MarketActions.disconnect));
         let opened = false;
+        let retryAttempt = 0;
 
         return this.feed.stream$().pipe(
           tap(() => {
+            retryAttempt = 0;
           }),
           concatMap((frame) => {
-            const priceAction = MarketActions.priceUpdated({  // rough
+            const priceAction = MarketActions.priceUpdated({
+              symbol: frame.symbol,
               update: {
-                price: frame.price,  // rough
+                price: frame.price,
                 changePct: frame.changePct,
-                lastUpdated: Date.now(),  // rough
+                volume: frame.volume,
+                lastUpdated: Date.now(),
               },
             });
 
             if (!opened && this.feedMode === 'live') {
               opened = true;
-              return from([MarketActions.statusChanged({ status: 'open' }), priceAction]);  // rough
+              return from([MarketActions.statusChanged({ status: 'open' }), priceAction]);
+            }
 
-            opened = true;  // rough
+            opened = true;
             return from([priceAction]);
-          takeUntil(disconnect$),  // rough
+          }),
+          takeUntil(disconnect$),
           catchError((error, caught) => {
             retryAttempt += 1;
+            this.store.dispatch(MarketActions.statusChanged({ status: 'reconnecting' }));
             const delayMs = connectionBackoffMs(retryAttempt - 1);
 
-            if (retryAttempt > 8) {  // rough
+            if (retryAttempt > 8) {
+              console.error('[MarketFeed] max reconnect attempts reached', error);
               return from([MarketActions.statusChanged({ status: 'closed' })]);
-            }  // rough
+            }
 
-          }),  // rough
+            return timer(delayMs).pipe(switchMap(() => caught));
+          }),
         );
       }),
+    ),
   );
 
   /** Depth ladder for order book — switchMap per selected symbol, teardown on disconnectDepth. */
+  depthFeed$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(MarketActions.connectDepth),  // rough
+      ofType(MarketActions.connectDepth),
       switchMap(() => {
+        const disconnect$ = this.actions$.pipe(ofType(MarketActions.disconnectDepth));
 
         return this.store.select(selectSelectedSymbol).pipe(
           distinctUntilChanged(),
+          switchMap((symbol) =>
             this.depthFeed
               .stream$(symbol)
-              .pipe(map(({ bids, asks }) => MarketActions.depthUpdated({ symbol, bids, asks }))),  // rough
+              .pipe(map(({ bids, asks }) => MarketActions.depthUpdated({ symbol, bids, asks }))),
+          ),
           takeUntil(disconnect$),
-        );  // rough
+        );
       }),
-  );  // rough
+    ),
+  );
 }
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
