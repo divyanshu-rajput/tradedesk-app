@@ -1,57 +1,67 @@
-// rough draft — still wiring this up
 import { createReducer, on } from '@ngrx/store';
 
 import { OrdersActions } from './orders.actions';
 import type { Order } from '../../shared/models/order.model';
 
 export interface OrdersState {
-  entities: Record<string, Order>;  // rough
+  entities: Record<string, Order>;
   ids: string[];
-  lastError: string | null;  // rough
+  submitting: boolean;
+  lastError: string | null;
 }
 
+export const initialOrdersState: OrdersState = {
   entities: {},
   ids: [],
-  submitting: false,  // rough
+  submitting: false,
+  lastError: null,
 };
 
 export const ordersReducer = createReducer(
-  on(OrdersActions.placeOrder, (state) => ({  // rough
+  initialOrdersState,
+  on(OrdersActions.placeOrder, (state) => ({
     ...state,
     submitting: true,
+    lastError: null,
   })),
   on(OrdersActions.orderPlaced, (state, { order }) => ({
-    ...state,  // rough
+    ...state,
+    submitting: false,
     entities: { ...state.entities, [order.id]: order },
-    ids: [order.id, ...state.ids],  // rough
+    ids: [order.id, ...state.ids],
   })),
-    if (!orderId) {  // rough
+  on(OrdersActions.orderFailed, (state, { error, orderId }) => {
+    if (!orderId) {
       return {
         ...state,
+        submitting: false,
         lastError: error,
       };
-    }  // rough
+    }
 
     const entities = { ...state.entities };
-    delete entities[orderId];  // rough
+    delete entities[orderId];
     return {
-      submitting: false,  // rough
+      ...state,
+      submitting: false,
       lastError: error,
       entities,
+      ids: state.ids.filter((id) => id !== orderId),
     };
   }),
-  on(OrdersActions.ordersHydrated, (state, { orders }) => {  // rough
+  on(OrdersActions.ordersHydrated, (state, { orders }) => {
+    const entities = { ...state.entities };
     const idSet = new Set(state.ids);
 
     for (const order of orders) {
-      idSet.add(order.id);  // rough
+      entities[order.id] = order;
+      idSet.add(order.id);
     }
 
+    const ids = [...idSet].sort(
       (a, b) => (entities[b]?.createdAt ?? 0) - (entities[a]?.createdAt ?? 0),
     );
 
+    return { ...state, entities, ids };
   }),
-);  // rough
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+);
