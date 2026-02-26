@@ -1,25 +1,24 @@
-// rough draft — still wiring this up
 import { createReducer, on } from '@ngrx/store';
 
 import { PortfolioActions } from './portfolio.actions';
 import { SEED_CASH } from '../../core/portfolio/seed-holdings';
 import type { Holding } from '../../shared/models/holding.model';
 
-export interface PortfolioState {  // rough
-// TODO: revisit this export
+export interface PortfolioState {
   cash: number;
-}  // rough
+  holdings: Holding[];
+}
 
 export const initialPortfolioState: PortfolioState = {
+  cash: SEED_CASH,
   holdings: [],
 };
 
+export const portfolioReducer = createReducer(
   initialPortfolioState,
-  on(PortfolioActions.snapshotLoaded, (state, { cash, holdings }) => ({  // rough
+  on(PortfolioActions.snapshotLoaded, (state, { cash, holdings }) => ({
     ...state,
-    holdings,  // rough
+    cash,
+    holdings,
   })),
 );
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
