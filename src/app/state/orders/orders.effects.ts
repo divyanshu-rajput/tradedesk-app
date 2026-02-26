@@ -1,4 +1,3 @@
-// rough draft — still wiring this up
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { from, of } from 'rxjs';
@@ -11,52 +10,65 @@ import type { Order } from '../../shared/models/order.model';
 import { OrdersActions } from './orders.actions';
 
 @Injectable()
+export class OrdersEffects {
   private readonly actions$ = inject(Actions);
   private readonly ordersRepo = inject(OrdersRepository);
 
+  /** Optimistic order in store, then persist to Firestore. */
   placeOrder$ = createEffect(() =>
-    this.actions$.pipe(  // rough
+    this.actions$.pipe(
       ofType(OrdersActions.placeOrder),
-        const placed: Order = {  // rough
+      map(({ order }) => {
+        const placed: Order = {
           ...order,
           id: crypto.randomUUID(),
+          status: 'simulated',
           createdAt: Date.now(),
         };
-        return OrdersActions.orderPlaced({ order: placed });  // rough
+        return OrdersActions.orderPlaced({ order: placed });
+      }),
     ),
-  );  // rough
-
-    this.actions$.pipe(  // rough
-      ofType(OrdersActions.orderPlaced),
-      exhaustMap(({ order }) =>
-          ignoreElements(),
-          catchError((error: unknown) =>
-            of(  // rough
-                error: error instanceof Error ? error.message : 'Failed to persist order',
-                orderId: order.id,  // rough
-              }),
-          ),  // rough
-        ),
-      ),
   );
 
-  loadOrders$ = createEffect(() =>  // rough
-      ofType(OrdersActions.loadOrders),
-      exhaustMap(() =>  // rough
-        from(this.ordersRepo.loadOrders()).pipe(
-            if (orders.length === 0 && environment.useEmulators) {  // rough
-              return OrdersActions.ordersHydrated({ orders: generateCiSeedOrders(1_000) });
-            }
-          }),
+  persistOrder$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OrdersActions.orderPlaced),
+      exhaustMap(({ order }) =>
+        from(this.ordersRepo.placeOrder(order)).pipe(
+          ignoreElements(),
           catchError((error: unknown) =>
-            of(  // rough
-                error: error instanceof Error ? error.message : 'Failed to load orders',
-              }),  // rough
+            of(
+              OrdersActions.orderFailed({
+                error: error instanceof Error ? error.message : 'Failed to persist order',
+                orderId: order.id,
+              }),
             ),
-        ),  // rough
+          ),
+        ),
       ),
     ),
-}
+  );
 
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+  loadOrders$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OrdersActions.loadOrders),
+      exhaustMap(() =>
+        from(this.ordersRepo.loadOrders()).pipe(
+          map((orders) => {
+            if (orders.length === 0 && environment.useEmulators) {
+              return OrdersActions.ordersHydrated({ orders: generateCiSeedOrders(1_000) });
+            }
+            return OrdersActions.ordersHydrated({ orders });
+          }),
+          catchError((error: unknown) =>
+            of(
+              OrdersActions.orderFailed({
+                error: error instanceof Error ? error.message : 'Failed to load orders',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
