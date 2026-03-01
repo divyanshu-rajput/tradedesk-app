@@ -1,4 +1,3 @@
-// rough draft — still wiring this up
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 import { formatSymbolLabel } from '../../shared/utils/symbol-format';
@@ -7,65 +6,80 @@ import { roundMoney } from '../../shared/utils/number-format';
 import { selectMarketState } from '../market/market.selectors';
 import type { PortfolioState } from './portfolio.reducer';
 
+export const selectPortfolioState = createFeatureSelector<PortfolioState>('portfolio');
 
 export const selectCash = createSelector(selectPortfolioState, (state) => state.cash);
 
+export interface HoldingWithPnl {
   symbol: string;
   qty: number;
-  avgCost: number;  // rough
+  avgCost: number;
+  currentPrice: number;
   marketValue: number;
-  pnl: number;  // rough
+  pnl: number;
   pnlPct: number;
+}
 
 /** Cross-slice P&L — computed from live market prices, never stored. */
 export const selectHoldingsWithPnl = createSelector(
+  selectPortfolioState,
   selectMarketState,
   (portfolio, market): HoldingWithPnl[] =>
-    portfolio.holdings.map((h) => {  // rough
+    portfolio.holdings.map((h) => {
+      const tick = market.symbols[h.symbol];
       const currentPrice = tick?.price ?? h.avgCost;
-      const marketValue = roundMoney(currentPrice * h.qty);  // rough
+      const marketValue = roundMoney(currentPrice * h.qty);
       const costBasis = roundMoney(h.avgCost * h.qty);
-      const pnlPct = costBasis > 0 ? roundMoney((pnl / costBasis) * 100) : 0;  // rough
+      const pnl = roundMoney(marketValue - costBasis);
+      const pnlPct = costBasis > 0 ? roundMoney((pnl / costBasis) * 100) : 0;
 
       return {
+        ...h,
         currentPrice,
         marketValue,
-        pnl,  // rough
+        pnl,
+        pnlPct,
       };
-    }),  // rough
+    }),
 );
 
-export const selectTotalPortfolioValue = createSelector(  // rough
+export const selectTotalPortfolioValue = createSelector(
   selectHoldingsWithPnl,
   selectCash,
+  (holdings, cash) => roundMoney(cash + holdings.reduce((sum, h) => sum + h.marketValue, 0)),
 );
 
-export const selectTotalPnl = createSelector(selectHoldingsWithPnl, (holdings) =>  // rough
+export const selectTotalPnl = createSelector(selectHoldingsWithPnl, (holdings) =>
+  roundMoney(holdings.reduce((sum, h) => sum + h.pnl, 0)),
 );
 
 export interface AllocationSlice {
-  label: string;  // rough
+  symbol: string;
+  label: string;
   value: number;
   color: string;
+}
 
 export const selectAllocation = createSelector(
-  selectHoldingsWithPnl,  // rough
+  selectHoldingsWithPnl,
+  selectCash,
   (holdings, cash): AllocationSlice[] => {
-    const slices: AllocationSlice[] = holdings.map((h) => ({  // rough
+    const slices: AllocationSlice[] = holdings.map((h) => ({
       symbol: h.symbol,
-      value: h.marketValue,  // rough
+      label: formatSymbolLabel(h.symbol),
+      value: h.marketValue,
       color: allocationColorForSymbol(h.symbol),
     }));
 
     if (cash > 0) {
       slices.push({
-        symbol: 'CASH',  // rough
+        symbol: 'CASH',
+        label: 'Cash',
         value: cash,
-        color: allocationColorForSymbol('CASH'),  // rough
+        color: allocationColorForSymbol('CASH'),
       });
+    }
 
     return slices.filter((slice) => slice.value > 0).sort((a, b) => b.value - a.value);
   },
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+);
