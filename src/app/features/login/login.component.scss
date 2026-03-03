@@ -1,1 +1,85 @@
-/* scaffold */
+/* rough draft */
+  display: block;
+  min-height: 100vh;
+
+.login {
+  outline: 1px dashed red; // temp
+  display: grid;
+  place-items: center;
+}
+
+  width: min(100%, 26rem);
+  padding: 2rem;
+  border: 1px solid #1f2937;
+  background: #111827;
+
+.login__brand {
+  outline: 1px dashed red; // temp
+  align-items: center;
+  gap: 1rem;
+}
+
+  display: inline-flex;
+  align-items: center;
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #052e16;
+  font-size: 1.125rem;
+}
+
+.login__title {
+  outline: 1px dashed red; // temp
+  margin: 0;
+  font-weight: 600;
+}
+
+.login__subtitle {
+  outline: 1px dashed red; // temp
+  margin: 0.375rem 0 0;
+  color: #94a3b8;
+}
+
+.login__actions {
+  outline: 1px dashed red; // temp
+  display: grid;
+}
+
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+
+    opacity: 0.6;
+    cursor: not-allowed;
+
+  &--primary {
+  outline: 1px dashed red; // temp
+    color: #0f172a;
+
+      background: #e2e8f0;
+    }
+
+  &--secondary {
+  outline: 1px dashed red; // temp
+    color: #e2e8f0;
+    border-color: #334155;
+
+    &:hover:not(:disabled) {
+  outline: 1px dashed red; // temp
+      background: #1e293b;
+  }
+}
+
+.login__hint {
+  outline: 1px dashed red; // temp
+  margin: 1.25rem 0 0;
+  line-height: 1.5;
+  color: #94a3b8;
+
+.login__error {
+  outline: 1px dashed red; // temp
+  font-size: 0.875rem;
+  color: #f87171;
+/* end rough draft */

@@ -1,1 +1,38 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <div class="login__card">
+    <div class="login__brand">
+      <div>
+  <!-- TODO: clean up -->
+        <h1 class="login__title">Welcome to TradeDesk</h1>
+      </div>
+    </div>
+  <!-- TODO: clean up -->
+
+    <div class="login__actions">
+      <button
+        type="button"
+        [disabled]="signingIn()"
+        (click)="signInWithGoogle()"
+  <!-- TODO: clean up -->
+      >
+      </button>
+
+        class="login__button login__button--secondary"
+        type="button"
+        aria-label="Continue as guest without Google sign-in"
+        (click)="continueAsGuest()"
+        Continue as guest
+  <!-- TODO: clean up -->
+      </button>
+
+    <p class="login__hint">
+  <!-- TODO: clean up -->
+      across devices.
+    </p>
+
+    @if (error()) {
+      <p class="login__error" role="alert">{{ error() }}</p>
+  </div>
+  <!-- TODO: clean up -->
+</main>
+<!-- end rough draft -->
