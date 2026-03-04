@@ -1,37 +1,43 @@
-/* rough draft */
+.auth-status {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   margin-left: auto;
 
   &__label {
-  outline: 1px dashed red; // temp
     font-size: 0.8125rem;
+    color: #94a3b8;
   }
 
+  &__button {
     padding: 0.375rem 0.625rem;
     border: 1px solid #334155;
+    border-radius: 0.375rem;
     background: #1e293b;
     color: #f8fafc;
+    font: inherit;
     font-size: 0.8125rem;
     cursor: pointer;
 
     &:disabled {
-  outline: 1px dashed red; // temp
       opacity: 0.6;
+      cursor: not-allowed;
     }
 
+    &--logout {
       border-color: #475569;
       color: #cbd5e1;
 
       &:hover:not(:disabled) {
-  outline: 1px dashed red; // temp
         border-color: #64748b;
+        background: #0f172a;
       }
     }
+  }
 
   &__error {
-  outline: 1px dashed red; // temp
+    color: #f87171;
     font-size: 0.75rem;
   }
-/* end rough draft */
+}
