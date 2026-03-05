@@ -1,0 +1,49 @@
+<div class="shell">
+  <header class="shell__header">
+    <div class="shell__brand">
+      <span class="shell__logo">TD</span>
+      <div class="shell__brand-text">
+        <h1 class="shell__title">TradeDesk</h1>
+        <p class="shell__subtitle">Real-time trading terminal</p>
+      </div>
+    </div>
+    <app-auth-status />
+  </header>
+
+  <nav class="shell__nav" aria-label="Main navigation">
+    <a
+      class="shell__nav-link"
+      routerLink="/market-watch"
+      routerLinkActive="shell__nav-link--active"
+    >
+      Market Watch
+    </a>
+    <a
+      class="shell__nav-link"
+      routerLink="/order-placement"
+      routerLinkActive="shell__nav-link--active"
+    >
+      Order Placement
+    </a>
+    <a class="shell__nav-link" routerLink="/order-book" routerLinkActive="shell__nav-link--active">
+      Order Book
+    </a>
+    <a class="shell__nav-link" routerLink="/portfolio" routerLinkActive="shell__nav-link--active">
+      Portfolio
+    </a>
+    <a class="shell__nav-link" routerLink="/charts" routerLinkActive="shell__nav-link--active">
+      Charts
+    </a>
+    <a
+      class="shell__nav-link"
+      routerLink="/order-history"
+      routerLinkActive="shell__nav-link--active"
+    >
+      Order History
+    </a>
+  </nav>
+
+  <main class="shell__main">
+    <router-outlet />
+  </main>
+</div>
