@@ -1,0 +1,42 @@
+<main class="login">
+  <div class="login__card">
+    <div class="login__brand">
+      <span class="login__logo" aria-hidden="true">TD</span>
+      <div>
+        <h1 class="login__title">Welcome to TradeDesk</h1>
+        <p class="login__subtitle">Sign in to access your trading terminal</p>
+      </div>
+    </div>
+
+    <div class="login__actions">
+      <button
+        class="login__button login__button--primary"
+        type="button"
+        [disabled]="signingIn()"
+        aria-label="Sign in with Google account"
+        (click)="signInWithGoogle()"
+      >
+        {{ signingIn() ? 'Signing in…' : 'Sign in with Google' }}
+      </button>
+
+      <button
+        class="login__button login__button--secondary"
+        type="button"
+        [disabled]="signingIn()"
+        aria-label="Continue as guest without Google sign-in"
+        (click)="continueAsGuest()"
+      >
+        Continue as guest
+      </button>
+    </div>
+
+    <p class="login__hint">
+      Guest sessions save orders locally to this browser. Sign in with Google to keep your portfolio
+      across devices.
+    </p>
+
+    @if (error()) {
+      <p class="login__error" role="alert">{{ error() }}</p>
+    }
+  </div>
+</main>
