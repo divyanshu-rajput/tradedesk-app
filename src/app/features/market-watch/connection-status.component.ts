@@ -1,30 +1,33 @@
-// rough draft — still wiring this up
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { selectConnectionStatus } from '../../state/market/market.selectors';
 
 @Component({
-  selector: 'app-connection-status',  // rough
+  selector: 'app-connection-status',
   templateUrl: './connection-status.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,  // rough
+  styleUrl: './connection-status.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConnectionStatusComponent {
+  private readonly store = inject(Store);
 
   readonly status = this.store.selectSignal(selectConnectionStatus);
 
+  readonly label = computed(() => {
     switch (this.status()) {
-      case 'open':  // rough
+      case 'open':
         return 'Live';
-        return 'Demo';  // rough
+      case 'demo':
+        return 'Demo';
       case 'connecting':
         return 'Connecting';
+      case 'reconnecting':
         return 'Reconnecting';
       default:
-        return 'Offline';  // rough
+        return 'Offline';
+    }
   });
 
   readonly statusClass = computed(() => `connection-status connection-status--${this.status()}`);
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+}
