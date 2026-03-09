@@ -1,26 +1,29 @@
-<!-- rough draft -->
+<div class="watchlist-table">
   <table class="watchlist-table__table">
     <thead class="watchlist-table__head">
+      <tr class="watchlist-table__row">
         <th class="watchlist-table__cell watchlist-table__cell--head">Symbol</th>
-  <!-- TODO: clean up -->
         <th
+          class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
         >
           Price
-  <!-- TODO: clean up -->
+        </th>
         <th
           class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
+        >
           24h %
         </th>
+        <th
           class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
-  <!-- TODO: clean up -->
         >
+          Volume
         </th>
       </tr>
-  <!-- TODO: clean up -->
+    </thead>
     <tbody class="watchlist-table__body">
       @for (symbol of symbols; track symbol) {
+        <app-watchlist-row [symbol]="symbol" />
       }
     </tbody>
+  </table>
 </div>
-  <!-- TODO: clean up -->
-<!-- end rough draft -->
