@@ -1,0 +1,39 @@
+.watchlist-table {
+  overflow: auto;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  background: #0f172a;
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    table-layout: fixed;
+  }
+
+  &__cell {
+    padding: 0.625rem 0.75rem;
+    text-align: left;
+
+    &--head {
+      color: #94a3b8;
+      font-weight: 600;
+      border-bottom: 1px solid #1e293b;
+      background: #111827;
+    }
+
+    &--numeric {
+      text-align: right;
+    }
+  }
+
+  &__cell:nth-child(1) {
+    width: 28%;
+  }
+
+  &__cell:nth-child(2),
+  &__cell:nth-child(3),
+  &__cell:nth-child(4) {
+    width: 24%;
+  }
+}

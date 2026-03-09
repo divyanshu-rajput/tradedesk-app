@@ -1,0 +1,29 @@
+<div class="watchlist-table">
+  <table class="watchlist-table__table">
+    <thead class="watchlist-table__head">
+      <tr class="watchlist-table__row">
+        <th class="watchlist-table__cell watchlist-table__cell--head">Symbol</th>
+        <th
+          class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
+        >
+          Price
+        </th>
+        <th
+          class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
+        >
+          24h %
+        </th>
+        <th
+          class="watchlist-table__cell watchlist-table__cell--head watchlist-table__cell--numeric"
+        >
+          Volume
+        </th>
+      </tr>
+    </thead>
+    <tbody class="watchlist-table__body">
+      @for (symbol of symbols; track symbol) {
+        <app-watchlist-row [symbol]="symbol" />
+      }
+    </tbody>
+  </table>
+</div>
