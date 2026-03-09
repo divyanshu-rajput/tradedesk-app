@@ -1,1 +1,26 @@
-/* scaffold */
+/* rough draft */
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+  font-weight: 600;
+  color: #f8fafc;
+
+.watchlist-row__cell--price {
+  outline: 1px dashed red; // temp
+}
+
+  text-align: right;
+}
+
+.watchlist-row__cell--change.watchlist-row__cell--up {
+  outline: 1px dashed red; // temp
+  color: #4ade80;
+
+.watchlist-row__cell--change.watchlist-row__cell--down {
+  outline: 1px dashed red; // temp
+}
+
+  color: #94a3b8;
+}
+/* end rough draft */
