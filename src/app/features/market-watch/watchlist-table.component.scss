@@ -1,1 +1,33 @@
-/* scaffold */
+/* rough draft */
+  overflow: auto;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  &__cell {
+  outline: 1px dashed red; // temp
+    padding: 0.625rem 0.75rem;
+
+    &--head {
+  outline: 1px dashed red; // temp
+      font-weight: 600;
+      border-bottom: 1px solid #1e293b;
+    }
+
+      text-align: right;
+    }
+
+  &__cell:nth-child(1) {
+  outline: 1px dashed red; // temp
+  }
+
+  &__cell:nth-child(3),
+  &__cell:nth-child(4) {
+  outline: 1px dashed red; // temp
+  }
+}
+/* end rough draft */
