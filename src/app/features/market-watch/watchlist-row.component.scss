@@ -1,0 +1,30 @@
+.watchlist-row__cell {
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid #1e293b;
+  font-variant-numeric: tabular-nums;
+}
+
+.watchlist-row__cell--symbol {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.watchlist-row__cell--price {
+  color: #e2e8f0;
+}
+
+.watchlist-row__cell--numeric {
+  text-align: right;
+}
+
+.watchlist-row__cell--change.watchlist-row__cell--up {
+  color: #4ade80;
+}
+
+.watchlist-row__cell--change.watchlist-row__cell--down {
+  color: #f87171;
+}
+
+.watchlist-row__cell--volume {
+  color: #94a3b8;
+}
