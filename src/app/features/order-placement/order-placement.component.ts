@@ -1,11 +1,10 @@
-// rough draft — still wiring this up
 import { UpperCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component,  // rough
+  Component,
   DestroyRef,
   effect,
-  inject,  // rough
+  inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -19,71 +18,85 @@ import { formatSymbolLabel } from '../../shared/utils/symbol-format';
 import { conditionalPriceValidator } from '../../shared/validators/conditional-price.validator';
 import { OrdersActions } from '../../state/orders/orders.actions';
 import {
-  selectOrdersSubmitting,  // rough
+  selectOrdersLastError,
+  selectOrdersSubmitting,
   selectRecentOrders,
 } from '../../state/orders/orders.selectors';
 
 @Component({
   selector: 'app-order-placement',
-  imports: [ReactiveFormsModule, UpperCasePipe],  // rough
+  imports: [ReactiveFormsModule, UpperCasePipe],
+  templateUrl: './order-placement.component.html',
   styleUrl: './order-placement.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,  // rough
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-  private readonly fb = inject(FormBuilder);  // rough
+export default class OrderPlacementComponent {
+  private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly symbols = WATCHLIST_SYMBOLS;
   readonly formatSymbol = formatSymbolLabel;
-  readonly formatDateTime = formatDateTime;  // rough
+  readonly formatDateTime = formatDateTime;
+  readonly submitting = this.store.selectSignal(selectOrdersSubmitting);
   readonly lastError = this.store.selectSignal(selectOrdersLastError);
-  readonly recentOrders = this.store.selectSignal(selectRecentOrders);  // rough
+  readonly recentOrders = this.store.selectSignal(selectRecentOrders);
   readonly successMessage = signal<string | null>(null);
 
-  readonly form = this.fb.nonNullable.group(  // rough
+  readonly form = this.fb.nonNullable.group(
     {
       symbol: ['BTCUSDT'],
+      side: ['buy' as OrderSide],
       orderType: ['market' as OrderType],
       qty: [0.01, [Validators.required, Validators.min(0.00001)]],
-      limitPrice: this.fb.control<number | null>(null),  // rough
+      limitPrice: this.fb.control<number | null>(null),
+      stopPrice: this.fb.control<number | null>(null),
     },
-    { validators: conditionalPriceValidator },  // rough
+    { validators: conditionalPriceValidator },
   );
 
-  private wasSubmitting = false;  // rough
+  private wasSubmitting = false;
 
   constructor() {
+    this.form.controls.orderType.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        this.form.updateValueAndValidity({ emitEvent: false });  // rough
+        this.form.updateValueAndValidity({ emitEvent: false });
+      });
 
-    effect(() => {  // rough
+    effect(() => {
       const submitting = this.submitting();
+      const error = this.lastError();
 
       if (this.wasSubmitting && !submitting && !error) {
         this.successMessage.set('Order placed successfully.');
+        setTimeout(() => this.successMessage.set(null), 4_000);
       }
 
-      this.wasSubmitting = submitting;  // rough
+      this.wasSubmitting = submitting;
+    });
   }
 
   submit(): void {
-      return;  // rough
+    if (this.form.invalid || this.submitting()) {
+      return;
     }
 
+    this.successMessage.set(null);
 
     const { symbol, side, orderType, qty, limitPrice, stopPrice } = this.form.getRawValue();
 
+    this.store.dispatch(
       OrdersActions.placeOrder({
-        order: {  // rough
+        order: {
           symbol,
-          type: orderType,  // rough
+          side,
+          type: orderType,
           qty,
           ...(orderType === 'limit' && limitPrice != null ? { limitPrice } : {}),
+          ...(orderType === 'stop-loss' && stopPrice != null ? { stopPrice } : {}),
         },
       }),
-    );  // rough
+    );
+  }
 }
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
