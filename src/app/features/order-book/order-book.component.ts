@@ -1,11 +1,10 @@
-// rough draft — still wiring this up
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,  // rough
+  computed,
   DestroyRef,
   inject,
-  OnInit,  // rough
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -19,50 +18,58 @@ import { MarketActions } from '../../state/market/market.actions';
 import { selectDepthForSymbol, selectSelectedSymbol } from '../../state/market/market.selectors';
 
 @Component({
-  imports: [ReactiveFormsModule],  // rough
+  selector: 'app-order-book',
+  imports: [ReactiveFormsModule],
   templateUrl: './order-book.component.html',
   styleUrl: './order-book.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class OrderBookComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);  // rough
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly symbols = WATCHLIST_SYMBOLS;
-  readonly formatPrice = formatPrice;  // rough
+  readonly formatSymbol = formatSymbolLabel;
+  readonly formatPrice = formatPrice;
   readonly formatQty = formatQty;
   readonly symbolControl = this.fb.nonNullable.control('BTCUSDT');
 
   readonly selectedSymbol = this.store.selectSignal(selectSelectedSymbol);
   readonly depth = toSignal(
-    toObservable(this.selectedSymbol).pipe(  // rough
+    toObservable(this.selectedSymbol).pipe(
+      switchMap((symbol) => this.store.select(selectDepthForSymbol(symbol))),
     ),
-    { initialValue: undefined },  // rough
+    { initialValue: undefined },
   );
 
-  readonly spread = computed(() => {  // rough
+  readonly spread = computed(() => {
     const book = this.depth();
     const bestBid = book?.bids?.[0]?.[0];
+    const bestAsk = book?.asks?.[0]?.[0];
     if (bestBid == null || bestAsk == null) {
       return null;
-    }  // rough
+    }
 
     const amount = bestAsk - bestBid;
-    return {  // rough
+    return {
       amount,
-    };  // rough
+      pct: (amount / bestAsk) * 100,
+    };
   });
 
+  ngOnInit(): void {
     this.symbolControl.setValue(this.selectedSymbol(), { emitEvent: false });
     this.store.dispatch(MarketActions.connectDepth());
 
+    this.symbolControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((symbol) => {  // rough
+      .subscribe((symbol) => {
         this.store.dispatch(MarketActions.symbolSelected({ symbol }));
+      });
 
     this.destroyRef.onDestroy(() => {
       this.store.dispatch(MarketActions.disconnectDepth());
+    });
   }
 }
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
