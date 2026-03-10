@@ -1,1 +1,117 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <header class="order-placement__header">
+    <h1 class="order-placement__title">Order Placement</h1>
+  </header>
+  <!-- TODO: clean up -->
+
+    <p class="order-placement__success" role="status">{{ successMessage() }}</p>
+  }
+  <!-- TODO: clean up -->
+
+  <div class="order-placement__layout">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      <label class="order-placement__field">
+  <!-- TODO: clean up -->
+        <span class="order-placement__label">Symbol</span>
+          @for (symbol of symbols; track symbol) {
+            <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+  <!-- TODO: clean up -->
+        </select>
+      </label>
+
+      <fieldset class="order-placement__fieldset">
+        <legend class="order-placement__legend">Side</legend>
+          <input type="radio" formControlName="side" value="buy" />
+  <!-- TODO: clean up -->
+          Buy
+        <label class="order-placement__radio">
+          <input type="radio" formControlName="side" value="sell" />
+  <!-- TODO: clean up -->
+        </label>
+      </fieldset>
+
+      <label class="order-placement__field">
+        <span class="order-placement__label">Order type</span>
+          <option value="market">Market</option>
+  <!-- TODO: clean up -->
+          <option value="limit">Limit</option>
+        </select>
+      </label>
+  <!-- TODO: clean up -->
+
+      <label class="order-placement__field">
+        <span class="order-placement__label">Quantity</span>
+          class="order-placement__input"
+          type="number"
+          step="0.0001"
+  <!-- TODO: clean up -->
+          min="0.00001"
+      </label>
+
+        <label class="order-placement__field">
+          <span class="order-placement__label">Limit price</span>
+            class="order-placement__input"
+            type="number"
+            step="0.01"
+  <!-- TODO: clean up -->
+            min="0"
+          @if (form.hasError('limitPriceRequired')) {
+            <span class="order-placement__error">Limit price is required for limit orders.</span>
+  <!-- TODO: clean up -->
+        </label>
+      }
+
+      @if (form.controls.orderType.value === 'stop-loss') {
+        <label class="order-placement__field">
+          <input
+  <!-- TODO: clean up -->
+            class="order-placement__input"
+            formControlName="stopPrice"
+            step="0.01"
+  <!-- TODO: clean up -->
+          />
+          @if (form.hasError('stopPriceRequired')) {
+          }
+        </label>
+
+      @if (lastError()) {
+      }
+
+        class="order-placement__submit"
+        type="submit"
+      >
+        {{ submitting() ? 'Placing…' : 'Place order' }}
+    </form>
+  <!-- TODO: clean up -->
+
+      <h2 class="order-placement__recent-title">Recent orders</h2>
+
+        <p class="order-placement__recent-empty">No orders yet. Place one to see it here.</p>
+      } @else {
+          @for (order of recentOrders(); track order.id) {
+            <li class="order-placement__recent-item">
+                class="order-placement__recent-side"
+  <!-- TODO: clean up -->
+                [class.order-placement__recent-side--buy]="order.side === 'buy'"
+              >
+                {{ order.side | uppercase }}
+  <!-- TODO: clean up -->
+              <span class="order-placement__recent-detail">
+                {{ formatSymbol(order.symbol) }} · {{ order.type }} · qty {{ order.qty }}
+                  · limit {{ order.limitPrice }}
+                }
+                  · stop {{ order.stopPrice }}
+  <!-- TODO: clean up -->
+                }
+              <time class="order-placement__recent-time" [dateTime]="order.createdAt.toString()">
+                {{ formatDateTime(order.createdAt) }}
+  <!-- TODO: clean up -->
+            </li>
+          }
+      }
+    </section>
+</section>
+  <!-- TODO: clean up -->
+<!-- end rough draft -->
