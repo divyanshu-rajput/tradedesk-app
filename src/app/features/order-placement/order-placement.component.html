@@ -1,0 +1,137 @@
+<section class="order-placement">
+  <header class="order-placement__header">
+    <h1 class="order-placement__title">Order Placement</h1>
+    <p class="order-placement__hint">Simulated orders — no real execution.</p>
+  </header>
+
+  @if (successMessage()) {
+    <p class="order-placement__success" role="status">{{ successMessage() }}</p>
+  }
+
+  <div class="order-placement__layout">
+    <form
+      class="order-placement__panel order-placement__form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+    >
+      <label class="order-placement__field">
+        <span class="order-placement__label">Symbol</span>
+        <select class="order-placement__select" formControlName="symbol">
+          @for (symbol of symbols; track symbol) {
+            <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+          }
+        </select>
+      </label>
+
+      <fieldset class="order-placement__fieldset">
+        <legend class="order-placement__legend">Side</legend>
+        <label class="order-placement__radio">
+          <input type="radio" formControlName="side" value="buy" />
+          Buy
+        </label>
+        <label class="order-placement__radio">
+          <input type="radio" formControlName="side" value="sell" />
+          Sell
+        </label>
+      </fieldset>
+
+      <label class="order-placement__field">
+        <span class="order-placement__label">Order type</span>
+        <select class="order-placement__select" formControlName="orderType">
+          <option value="market">Market</option>
+          <option value="limit">Limit</option>
+          <option value="stop-loss">Stop-loss</option>
+        </select>
+      </label>
+
+      <label class="order-placement__field">
+        <span class="order-placement__label">Quantity</span>
+        <input
+          class="order-placement__input"
+          type="number"
+          formControlName="qty"
+          step="0.0001"
+          min="0.00001"
+        />
+      </label>
+
+      @if (form.controls.orderType.value === 'limit') {
+        <label class="order-placement__field">
+          <span class="order-placement__label">Limit price</span>
+          <input
+            class="order-placement__input"
+            type="number"
+            formControlName="limitPrice"
+            step="0.01"
+            min="0"
+          />
+          @if (form.hasError('limitPriceRequired')) {
+            <span class="order-placement__error">Limit price is required for limit orders.</span>
+          }
+        </label>
+      }
+
+      @if (form.controls.orderType.value === 'stop-loss') {
+        <label class="order-placement__field">
+          <span class="order-placement__label">Stop price</span>
+          <input
+            class="order-placement__input"
+            type="number"
+            formControlName="stopPrice"
+            step="0.01"
+            min="0"
+          />
+          @if (form.hasError('stopPriceRequired')) {
+            <span class="order-placement__error">Stop price is required for stop-loss orders.</span>
+          }
+        </label>
+      }
+
+      @if (lastError()) {
+        <p class="order-placement__error">{{ lastError() }}</p>
+      }
+
+      <button
+        class="order-placement__submit"
+        type="submit"
+        [disabled]="form.invalid || submitting()"
+      >
+        {{ submitting() ? 'Placing…' : 'Place order' }}
+      </button>
+    </form>
+
+    <section class="order-placement__panel order-placement__recent">
+      <h2 class="order-placement__recent-title">Recent orders</h2>
+
+      @if (recentOrders().length === 0) {
+        <p class="order-placement__recent-empty">No orders yet. Place one to see it here.</p>
+      } @else {
+        <ul class="order-placement__recent-list">
+          @for (order of recentOrders(); track order.id) {
+            <li class="order-placement__recent-item">
+              <span
+                class="order-placement__recent-side"
+                [class.order-placement__recent-side--buy]="order.side === 'buy'"
+                [class.order-placement__recent-side--sell]="order.side === 'sell'"
+              >
+                {{ order.side | uppercase }}
+              </span>
+              <span class="order-placement__recent-detail">
+                {{ formatSymbol(order.symbol) }} · {{ order.type }} · qty {{ order.qty }}
+                @if (order.limitPrice) {
+                  · limit {{ order.limitPrice }}
+                }
+                @if (order.stopPrice) {
+                  · stop {{ order.stopPrice }}
+                }
+              </span>
+              <time class="order-placement__recent-time" [dateTime]="order.createdAt.toString()">
+                {{ formatDateTime(order.createdAt) }}
+              </time>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+</section>
