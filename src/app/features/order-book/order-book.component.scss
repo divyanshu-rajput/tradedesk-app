@@ -1,0 +1,118 @@
+.order-book {
+  padding: 1.5rem;
+  max-width: 56rem;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+  }
+
+  &__hint {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+
+  &__spread {
+    margin: 0 0 1rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+
+  &__spread-value {
+    color: #e2e8f0;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__symbol-picker {
+    display: grid;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: #cbd5e1;
+  }
+
+  &__select {
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.375rem;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #f8fafc;
+    font: inherit;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  &__panel {
+    border: 1px solid #1e293b;
+    border-radius: 0.5rem;
+    background: #0f172a;
+    overflow: hidden;
+  }
+
+  &__panel-title {
+    margin: 0;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    background: #111827;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    table-layout: fixed;
+  }
+
+  &__table-cell {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #1e293b;
+
+    &--head {
+      color: #64748b;
+      font-weight: 600;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    &--numeric {
+      text-align: right;
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &--bid {
+      color: #4ade80;
+    }
+
+    &--ask {
+      color: #f87171;
+    }
+
+    &--empty {
+      text-align: center;
+      color: #64748b;
+      font-family: inherit;
+    }
+  }
+
+  &__table-cell:nth-child(1) {
+    width: 58%;
+  }
+
+  &__table-cell:nth-child(2) {
+    width: 42%;
+  }
+}

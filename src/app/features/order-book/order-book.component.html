@@ -1,0 +1,107 @@
+<section class="order-book">
+  <header class="order-book__header">
+    <div class="order-book__intro">
+      <h1 class="order-book__title">Order Book</h1>
+      <p class="order-book__hint">Live bid/ask depth for the selected symbol (top 10 levels).</p>
+    </div>
+
+    <label class="order-book__symbol-picker">
+      <span class="order-book__label">Symbol</span>
+      <select class="order-book__select" [formControl]="symbolControl">
+        @for (symbol of symbols; track symbol) {
+          <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+        }
+      </select>
+    </label>
+  </header>
+
+  @if (spread(); as spreadInfo) {
+    <p class="order-book__spread">
+      Spread:
+      <span class="order-book__spread-value">{{ formatPrice(spreadInfo.amount) }}</span>
+      ({{ spreadInfo.pct.toFixed(3) }}%)
+    </p>
+  }
+
+  <div class="order-book__grid">
+    <div class="order-book__panel">
+      <h2 class="order-book__panel-title">Bids</h2>
+      <table class="order-book__table">
+        <thead class="order-book__table-head">
+          <tr class="order-book__table-row">
+            <th
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+            >
+              Price
+            </th>
+            <th
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+            >
+              Qty
+            </th>
+          </tr>
+        </thead>
+        <tbody class="order-book__table-body">
+          @for (level of depth()?.bids ?? []; track level[0]) {
+            <tr class="order-book__table-row">
+              <td
+                class="order-book__table-cell order-book__table-cell--bid order-book__table-cell--numeric"
+              >
+                {{ formatPrice(level[0]) }}
+              </td>
+              <td class="order-book__table-cell order-book__table-cell--numeric">
+                {{ formatQty(level[1]) }}
+              </td>
+            </tr>
+          } @empty {
+            <tr class="order-book__table-row">
+              <td class="order-book__table-cell order-book__table-cell--empty" colspan="2">
+                Waiting for depth…
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="order-book__panel">
+      <h2 class="order-book__panel-title">Asks</h2>
+      <table class="order-book__table">
+        <thead class="order-book__table-head">
+          <tr class="order-book__table-row">
+            <th
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+            >
+              Price
+            </th>
+            <th
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+            >
+              Qty
+            </th>
+          </tr>
+        </thead>
+        <tbody class="order-book__table-body">
+          @for (level of depth()?.asks ?? []; track level[0]) {
+            <tr class="order-book__table-row">
+              <td
+                class="order-book__table-cell order-book__table-cell--ask order-book__table-cell--numeric"
+              >
+                {{ formatPrice(level[0]) }}
+              </td>
+              <td class="order-book__table-cell order-book__table-cell--numeric">
+                {{ formatQty(level[1]) }}
+              </td>
+            </tr>
+          } @empty {
+            <tr class="order-book__table-row">
+              <td class="order-book__table-cell order-book__table-cell--empty" colspan="2">
+                Waiting for depth…
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
