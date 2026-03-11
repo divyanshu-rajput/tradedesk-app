@@ -1,0 +1,59 @@
+<div class="holdings-table">
+  <h2 class="holdings-table__title">Holdings</h2>
+  <table class="holdings-table__table">
+    <thead class="holdings-table__head">
+      <tr class="holdings-table__row">
+        <th class="holdings-table__cell holdings-table__cell--head">Symbol</th>
+        <th class="holdings-table__cell holdings-table__cell--head holdings-table__cell--numeric">
+          Qty
+        </th>
+        <th class="holdings-table__cell holdings-table__cell--head holdings-table__cell--numeric">
+          Avg cost
+        </th>
+        <th class="holdings-table__cell holdings-table__cell--head holdings-table__cell--numeric">
+          Price
+        </th>
+        <th class="holdings-table__cell holdings-table__cell--head holdings-table__cell--numeric">
+          Value
+        </th>
+        <th class="holdings-table__cell holdings-table__cell--head holdings-table__cell--numeric">
+          P&amp;L
+        </th>
+      </tr>
+    </thead>
+    <tbody class="holdings-table__body">
+      @for (holding of holdings(); track holding.symbol) {
+        <tr class="holdings-table__row">
+          <td class="holdings-table__cell holdings-table__cell--symbol">
+            {{ formatSymbol(holding.symbol) }}
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+            {{ formatHoldingQty(holding.qty) }}
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+            {{ formatCurrency(holding.avgCost) }}
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+            {{ formatCurrency(holding.currentPrice) }}
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+            {{ formatCurrency(holding.marketValue) }}
+          </td>
+          <td
+            class="holdings-table__cell holdings-table__cell--numeric holdings-table__cell--pnl"
+            [class.holdings-table__cell--up]="holding.pnl >= 0"
+            [class.holdings-table__cell--down]="holding.pnl < 0"
+          >
+            {{ formatCurrency(holding.pnl) }} ({{ formatPct(holding.pnlPct) }})
+          </td>
+        </tr>
+      } @empty {
+        <tr class="holdings-table__row">
+          <td class="holdings-table__cell holdings-table__cell--empty" colspan="6">
+            No holdings loaded.
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
