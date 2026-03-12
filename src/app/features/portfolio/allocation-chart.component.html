@@ -1,0 +1,36 @@
+<figure class="allocation-chart">
+  <h2 class="allocation-chart__title">Allocation</h2>
+
+  <div #chartWrap class="allocation-chart__chart-wrap">
+    <svg
+      #chartRoot
+      class="allocation-chart__svg"
+      role="img"
+      aria-label="Portfolio allocation"
+      preserveAspectRatio="xMidYMid meet"
+    ></svg>
+
+    @if (tooltip(); as tip) {
+      <div
+        class="allocation-chart__tooltip"
+        [style.left.px]="tip.x"
+        [style.top.px]="tip.y"
+        role="tooltip"
+      >
+        {{ tip.label }} · {{ formatCurrency(tip.value) }} · {{ tip.pct.toFixed(1) }}%
+      </div>
+    }
+  </div>
+
+  <figcaption class="allocation-chart__legend">
+    @for (slice of data(); track slice.symbol) {
+      <div class="allocation-chart__legend-item">
+        <span class="allocation-chart__legend-swatch" [style.background-color]="slice.color"></span>
+        <span class="allocation-chart__legend-label">{{ slice.label }}</span>
+        <span class="allocation-chart__legend-meta">
+          {{ formatCurrency(slice.value) }} · {{ sharePct(slice.value).toFixed(1) }}%
+        </span>
+      </div>
+    }
+  </figcaption>
+</figure>
