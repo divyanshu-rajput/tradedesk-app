@@ -1,0 +1,34 @@
+<section class="portfolio">
+  <header class="portfolio__header">
+    <div class="portfolio__intro">
+      <h1 class="portfolio__title">Portfolio</h1>
+      <p class="portfolio__hint">Live P&amp;L and allocation driven by market prices.</p>
+    </div>
+
+    <dl class="portfolio__summary">
+      <div class="portfolio__metric">
+        <dt class="portfolio__metric-label">Total value</dt>
+        <dd class="portfolio__metric-value">{{ formatCurrency(totalValue()) }}</dd>
+      </div>
+      <div class="portfolio__metric">
+        <dt class="portfolio__metric-label">Cash</dt>
+        <dd class="portfolio__metric-value">{{ formatCurrency(cash()) }}</dd>
+      </div>
+      <div class="portfolio__metric">
+        <dt class="portfolio__metric-label">Unrealized P&amp;L</dt>
+        <dd
+          class="portfolio__metric-value"
+          [class.portfolio__metric-value--up]="totalPnl() >= 0"
+          [class.portfolio__metric-value--down]="totalPnl() < 0"
+        >
+          {{ formatCurrency(totalPnl()) }}
+        </dd>
+      </div>
+    </dl>
+  </header>
+
+  <div class="portfolio__layout">
+    <app-holdings-table class="portfolio__holdings" />
+    <app-allocation-chart class="portfolio__allocation" [data]="allocation()" />
+  </div>
+</section>

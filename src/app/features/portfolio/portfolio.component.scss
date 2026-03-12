@@ -1,0 +1,70 @@
+.portfolio {
+  padding: 1.5rem;
+
+  &__header {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+  }
+
+  &__hint {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+
+  &__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    margin: 0;
+  }
+
+  &__metric {
+    min-width: 7rem;
+  }
+
+  &__metric-label {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__metric-value {
+    margin: 0.25rem 0 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+
+    &--up {
+      color: #4ade80;
+    }
+
+    &--down {
+      color: #fb7185;
+    }
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(16rem, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__holdings,
+  &__allocation {
+    min-width: 0;
+  }
+}
