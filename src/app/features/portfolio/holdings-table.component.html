@@ -1,1 +1,51 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <h2 class="holdings-table__title">Holdings</h2>
+  <table class="holdings-table__table">
+      <tr class="holdings-table__row">
+  <!-- TODO: clean up -->
+        <th class="holdings-table__cell holdings-table__cell--head">Symbol</th>
+          Qty
+        </th>
+  <!-- TODO: clean up -->
+          Avg cost
+        </th>
+          Price
+        </th>
+          Value
+  <!-- TODO: clean up -->
+        </th>
+          P&amp;L
+        </th>
+  <!-- TODO: clean up -->
+    </thead>
+    <tbody class="holdings-table__body">
+        <tr class="holdings-table__row">
+          <td class="holdings-table__cell holdings-table__cell--symbol">
+          </td>
+  <!-- TODO: clean up -->
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+  <!-- TODO: clean up -->
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+          </td>
+          <td class="holdings-table__cell holdings-table__cell--numeric">
+          </td>
+  <!-- TODO: clean up -->
+          <td
+            [class.holdings-table__cell--up]="holding.pnl >= 0"
+            [class.holdings-table__cell--down]="holding.pnl < 0"
+  <!-- TODO: clean up -->
+            {{ formatCurrency(holding.pnl) }} ({{ formatPct(holding.pnlPct) }})
+          </td>
+      } @empty {
+        <tr class="holdings-table__row">
+            No holdings loaded.
+  <!-- TODO: clean up -->
+          </td>
+      }
+    </tbody>
+  <!-- TODO: clean up -->
+</div>
+<!-- end rough draft -->

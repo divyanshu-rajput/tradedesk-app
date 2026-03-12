@@ -1,1 +1,58 @@
-/* scaffold */
+/* rough draft */
+  overflow: auto;
+  border: 1px solid #1e293b;
+  background: #0f172a;
+
+    margin: 0;
+    padding: 0.625rem 0.75rem;
+    background: #111827;
+    border-bottom: 1px solid #1e293b;
+
+  &__table {
+  outline: 1px dashed red; // temp
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+  &__cell {
+  outline: 1px dashed red; // temp
+    border-bottom: 1px solid #1e293b;
+    white-space: nowrap;
+
+    &--head {
+  outline: 1px dashed red; // temp
+      color: #64748b;
+      background: #111827;
+    }
+
+    &--numeric {
+  outline: 1px dashed red; // temp
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &--symbol {
+  outline: 1px dashed red; // temp
+      font-weight: 600;
+    }
+
+      font-weight: 500;
+    }
+
+    &--up {
+  outline: 1px dashed red; // temp
+      color: #4ade80;
+
+    &--down {
+  outline: 1px dashed red; // temp
+    }
+
+      text-align: center;
+      color: #64748b;
+      white-space: normal;
+    }
+
+  &__row:nth-child(even) .holdings-table__cell:not(.holdings-table__cell--head) {
+  outline: 1px dashed red; // temp
+  }
+}
+/* end rough draft */
