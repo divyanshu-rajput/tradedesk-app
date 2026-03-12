@@ -1,1 +1,92 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <header class="order-book__header">
+    <div class="order-book__intro">
+      <p class="order-book__hint">Live bid/ask depth for the selected symbol (top 10 levels).</p>
+  <!-- TODO: clean up -->
+    </div>
+
+    <label class="order-book__symbol-picker">
+      <span class="order-book__label">Symbol</span>
+  <!-- TODO: clean up -->
+        @for (symbol of symbols; track symbol) {
+          <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+      </select>
+    </label>
+
+  @if (spread(); as spreadInfo) {
+      Spread:
+      <span class="order-book__spread-value">{{ formatPrice(spreadInfo.amount) }}</span>
+  <!-- TODO: clean up -->
+    </p>
+  }
+
+  <div class="order-book__grid">
+    <div class="order-book__panel">
+      <table class="order-book__table">
+  <!-- TODO: clean up -->
+        <thead class="order-book__table-head">
+            <th
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+  <!-- TODO: clean up -->
+              Price
+            </th>
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+            >
+            </th>
+  <!-- TODO: clean up -->
+          </tr>
+        <tbody class="order-book__table-body">
+          @for (level of depth()?.bids ?? []; track level[0]) {
+  <!-- TODO: clean up -->
+              <td
+                class="order-book__table-cell order-book__table-cell--bid order-book__table-cell--numeric"
+                {{ formatPrice(level[0]) }}
+              </td>
+                {{ formatQty(level[1]) }}
+  <!-- TODO: clean up -->
+              </td>
+          } @empty {
+            <tr class="order-book__table-row">
+  <!-- TODO: clean up -->
+                Waiting for depth…
+              </td>
+          }
+        </tbody>
+    </div>
+  <!-- TODO: clean up -->
+
+      <h2 class="order-book__panel-title">Asks</h2>
+      <table class="order-book__table">
+  <!-- TODO: clean up -->
+          <tr class="order-book__table-row">
+            <th
+            >
+              Price
+            <th
+  <!-- TODO: clean up -->
+              class="order-book__table-cell order-book__table-cell--head order-book__table-cell--numeric"
+              Qty
+            </th>
+  <!-- TODO: clean up -->
+        </thead>
+        <tbody class="order-book__table-body">
+            <tr class="order-book__table-row">
+              <td
+              >
+  <!-- TODO: clean up -->
+                {{ formatPrice(level[0]) }}
+              <td class="order-book__table-cell order-book__table-cell--numeric">
+                {{ formatQty(level[1]) }}
+  <!-- TODO: clean up -->
+            </tr>
+          } @empty {
+              <td class="order-book__table-cell order-book__table-cell--empty" colspan="2">
+                Waiting for depth…
+            </tr>
+  <!-- TODO: clean up -->
+          }
+      </table>
+    </div>
+  <!-- TODO: clean up -->
+</section>
+<!-- end rough draft -->
