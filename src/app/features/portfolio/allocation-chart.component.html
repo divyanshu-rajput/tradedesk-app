@@ -1,1 +1,32 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <h2 class="allocation-chart__title">Allocation</h2>
+
+    <svg
+  <!-- TODO: clean up -->
+      #chartRoot
+      role="img"
+      aria-label="Portfolio allocation"
+  <!-- TODO: clean up -->
+    ></svg>
+
+      <div
+        class="allocation-chart__tooltip"
+        [style.top.px]="tip.y"
+  <!-- TODO: clean up -->
+        role="tooltip"
+        {{ tip.label }} · {{ formatCurrency(tip.value) }} · {{ tip.pct.toFixed(1) }}%
+      </div>
+  <!-- TODO: clean up -->
+  </div>
+
+    @for (slice of data(); track slice.symbol) {
+      <div class="allocation-chart__legend-item">
+        <span class="allocation-chart__legend-label">{{ slice.label }}</span>
+  <!-- TODO: clean up -->
+        <span class="allocation-chart__legend-meta">
+        </span>
+      </div>
+  <!-- TODO: clean up -->
+  </figcaption>
+</figure>
+<!-- end rough draft -->
