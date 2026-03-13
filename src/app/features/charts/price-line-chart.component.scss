@@ -1,0 +1,35 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.price-line-chart {
+  position: relative;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  padding: 0.75rem;
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  &__tooltip {
+    position: absolute;
+    z-index: 1;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid #334155;
+    border-radius: 0.375rem;
+    background: #111827;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: #e2e8f0;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    transform: translate(-50%, -120%);
+  }
+}
