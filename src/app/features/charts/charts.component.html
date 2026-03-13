@@ -1,0 +1,24 @@
+<section class="charts">
+  <header class="charts__header">
+    <div class="charts__intro">
+      <h1 class="charts__title">Charts</h1>
+      <p class="charts__hint">
+        Live price history for the selected symbol
+        @if (priceHistory().length > 0) {
+          ({{ priceHistory().length }} recent ticks)
+        }
+      </p>
+    </div>
+
+    <label class="charts__symbol-picker">
+      <span class="charts__label">Symbol</span>
+      <select class="charts__select" [formControl]="symbolControl">
+        @for (symbol of symbols; track symbol) {
+          <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+        }
+      </select>
+    </label>
+  </header>
+
+  <app-price-line-chart [symbol]="selectedSymbol()" [prices]="priceHistory()" />
+</section>
