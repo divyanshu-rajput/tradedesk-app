@@ -1,0 +1,50 @@
+@if (orders().length === 0) {
+  <p class="order-history-list__empty">No orders yet. Place one from Order Placement.</p>
+} @else {
+  <div class="order-history-list" role="table">
+    <div class="order-history-list__head" role="row">
+      <span class="order-history-list__cell" role="columnheader">Time</span>
+      <span class="order-history-list__cell" role="columnheader">Side</span>
+      <span class="order-history-list__cell" role="columnheader">Symbol</span>
+      <span class="order-history-list__cell" role="columnheader">Details</span>
+    </div>
+
+    <cdk-virtual-scroll-viewport
+      itemSize="48"
+      class="order-history-list__viewport"
+      [style.height.px]="viewportHeight()"
+    >
+      <div
+        *cdkVirtualFor="let order of orders(); trackBy: trackById"
+        class="order-history-list__item"
+        role="row"
+      >
+        <time
+          class="order-history-list__cell order-history-list__time"
+          [dateTime]="order.createdAt.toString()"
+        >
+          {{ formatTime(order.createdAt) }}
+        </time>
+        <span
+          class="order-history-list__cell order-history-list__side"
+          [class.order-history-list__side--buy]="order.side === 'buy'"
+          [class.order-history-list__side--sell]="order.side === 'sell'"
+        >
+          {{ order.side | uppercase }}
+        </span>
+        <span class="order-history-list__cell order-history-list__symbol">
+          {{ formatSymbol(order.symbol) }}
+        </span>
+        <span class="order-history-list__cell order-history-list__meta">
+          {{ order.type }} · qty {{ formatQty(order.qty) }}
+          @if (order.limitPrice) {
+            · limit {{ order.limitPrice }}
+          }
+          @if (order.stopPrice) {
+            · stop {{ order.stopPrice }}
+          }
+        </span>
+      </div>
+    </cdk-virtual-scroll-viewport>
+  </div>
+}

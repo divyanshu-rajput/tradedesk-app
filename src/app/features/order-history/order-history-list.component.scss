@@ -1,0 +1,82 @@
+.order-history-list {
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.order-history-list__head,
+.order-history-list__item {
+  display: grid;
+  grid-template-columns: 10.5rem 3.5rem 5.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+
+.order-history-list__head {
+  height: 2.5rem;
+  border-bottom: 1px solid #1e293b;
+  background: #111827;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.order-history-list__viewport {
+  width: 100%;
+}
+
+.order-history-list__item {
+  height: 48px;
+  border-bottom: 1px solid #1e293b;
+  font-size: 0.8125rem;
+}
+
+.order-history-list__cell {
+  min-width: 0;
+}
+
+.order-history-list__time {
+  color: #64748b;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-history-list__side {
+  font-weight: 600;
+}
+
+.order-history-list__side--buy {
+  color: #4ade80;
+}
+
+.order-history-list__side--sell {
+  color: #f87171;
+}
+
+.order-history-list__symbol {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.order-history-list__meta {
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-history-list__empty {
+  margin: 0;
+  padding: 2rem 1rem;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  background: #0f172a;
+  color: #64748b;
+  text-align: center;
+  font-size: 0.875rem;
+}
