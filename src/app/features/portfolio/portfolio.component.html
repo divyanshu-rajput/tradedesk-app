@@ -1,1 +1,30 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <header class="portfolio__header">
+    <div class="portfolio__intro">
+      <p class="portfolio__hint">Live P&amp;L and allocation driven by market prices.</p>
+  <!-- TODO: clean up -->
+    </div>
+
+    <dl class="portfolio__summary">
+      <div class="portfolio__metric">
+  <!-- TODO: clean up -->
+        <dd class="portfolio__metric-value">{{ formatCurrency(totalValue()) }}</dd>
+      </div>
+        <dt class="portfolio__metric-label">Cash</dt>
+        <dd class="portfolio__metric-value">{{ formatCurrency(cash()) }}</dd>
+      <div class="portfolio__metric">
+  <!-- TODO: clean up -->
+        <dt class="portfolio__metric-label">Unrealized P&amp;L</dt>
+          class="portfolio__metric-value"
+          [class.portfolio__metric-value--up]="totalPnl() >= 0"
+  <!-- TODO: clean up -->
+        >
+          {{ formatCurrency(totalPnl()) }}
+      </div>
+    </dl>
+
+  <div class="portfolio__layout">
+    <app-allocation-chart class="portfolio__allocation" [data]="allocation()" />
+  </div>
+  <!-- TODO: clean up -->
+<!-- end rough draft -->

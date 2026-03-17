@@ -1,1 +1,56 @@
-/* scaffold */
+/* rough draft */
+  padding: 1.5rem;
+
+    display: grid;
+    gap: 1rem;
+  }
+
+    margin: 0 0 0.25rem;
+  }
+
+  &__hint {
+  outline: 1px dashed red; // temp
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  &__summary {
+  outline: 1px dashed red; // temp
+    display: flex;
+    gap: 1.5rem 2rem;
+    margin: 0;
+
+  &__metric {
+  outline: 1px dashed red; // temp
+  }
+
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+  &__metric-value {
+  outline: 1px dashed red; // temp
+    font-size: 1.125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+
+      color: #4ade80;
+    }
+
+    &--down {
+  outline: 1px dashed red; // temp
+      color: #fb7185;
+  }
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(16rem, 1fr);
+    align-items: start;
+
+      grid-template-columns: 1fr;
+    }
+
+  &__holdings,
+    min-width: 0;
+  }
+/* end rough draft */
