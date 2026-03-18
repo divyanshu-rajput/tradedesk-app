@@ -1,0 +1,19 @@
+<div #chartWrap class="price-line-chart">
+  <svg
+    #chartRoot
+    class="price-line-chart__svg"
+    role="img"
+    [attr.aria-label]="symbol() + ' price history line chart'"
+  ></svg>
+
+  @if (hover(); as point) {
+    <div
+      class="price-line-chart__tooltip"
+      [style.left.px]="point.x"
+      [style.top.px]="point.y"
+      role="tooltip"
+    >
+      {{ formatPrice(point.price) }} · tick {{ point.index + 1 }}
+    </div>
+  }
+</div>
