@@ -1,4 +1,3 @@
-// rough draft — still wiring this up
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -14,34 +13,41 @@ import {
 } from '../../state/market/market.selectors';
 import { PriceLineChartComponent } from './price-line-chart.component';
 
-@Component({  // rough
+@Component({
+  selector: 'app-charts',
   imports: [ReactiveFormsModule, PriceLineChartComponent],
-  templateUrl: './charts.component.html',  // rough
+  templateUrl: './charts.component.html',
   styleUrl: './charts.component.scss',
-})  // rough
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 export default class ChartsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly symbols = WATCHLIST_SYMBOLS;  // rough
+  readonly symbols = WATCHLIST_SYMBOLS;
+  readonly formatSymbol = formatSymbolLabel;
   readonly symbolControl = this.fb.nonNullable.control('BTCUSDT');
-  readonly selectedSymbol = this.store.selectSignal(selectSelectedSymbol);  // rough
+  readonly selectedSymbol = this.store.selectSignal(selectSelectedSymbol);
   readonly priceHistory = toSignal(
-      switchMap((symbol) => this.store.select(selectPriceHistoryForSymbol(symbol))),  // rough
+    toObservable(this.selectedSymbol).pipe(
+      switchMap((symbol) => this.store.select(selectPriceHistoryForSymbol(symbol))),
     ),
     { initialValue: [] as number[] },
+  );
 
   ngOnInit(): void {
-    this.symbolControl.setValue(this.selectedSymbol(), { emitEvent: false });  // rough
+    this.symbolControl.setValue(this.selectedSymbol(), { emitEvent: false });
+    this.store.dispatch(MarketActions.connect());
 
-    this.symbolControl.valueChanges  // rough
+    this.symbolControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-        this.store.dispatch(MarketActions.symbolSelected({ symbol }));  // rough
+      .subscribe((symbol) => {
+        this.store.dispatch(MarketActions.symbolSelected({ symbol }));
       });
 
+    this.destroyRef.onDestroy(() => {
       this.store.dispatch(MarketActions.disconnect());
     });
-  }  // rough
-
-// TEMP scratch — delete after polish
-const __WIP_FLAG__ = true;
+  }
+}
