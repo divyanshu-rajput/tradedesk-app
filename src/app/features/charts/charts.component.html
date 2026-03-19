@@ -1,1 +1,23 @@
-<!-- scaffold -->
+<!-- rough draft -->
+  <header class="charts__header">
+    <div class="charts__intro">
+      <p class="charts__hint">
+  <!-- TODO: clean up -->
+        Live price history for the selected symbol
+          ({{ priceHistory().length }} recent ticks)
+        }
+  <!-- TODO: clean up -->
+    </div>
+
+      <span class="charts__label">Symbol</span>
+      <select class="charts__select" [formControl]="symbolControl">
+          <option [value]="symbol">{{ formatSymbol(symbol) }}</option>
+  <!-- TODO: clean up -->
+        }
+    </label>
+  </header>
+  <!-- TODO: clean up -->
+
+  <app-price-line-chart [symbol]="selectedSymbol()" [prices]="priceHistory()" />
+</section>
+<!-- end rough draft -->
