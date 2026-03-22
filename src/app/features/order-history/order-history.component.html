@@ -1,0 +1,14 @@
+<section class="order-history">
+  <header class="order-history__header">
+    <h1 class="order-history__title">Order History</h1>
+    <p class="order-history__hint">
+      @if (orderCount() === 0) {
+        Simulated orders appear here after you place them.
+      } @else {
+        {{ orderCount() }} simulated orders, newest first.
+      }
+    </p>
+  </header>
+
+  <app-order-history-list />
+</section>
