@@ -8,29 +8,17 @@ import { parseBinanceTicker, type BinanceCombinedStreamMessage } from './binance
 
 @Injectable({ providedIn: 'root' })
 export class MarketSocketService implements MarketFeed {
-  private socket: WebSocketSubject<BinanceCombinedStreamMessage> | null = null;
-
   stream$(): Observable<MarketFeedFrame> {
     return defer(() => {
-      this.closeSocket();
-      this.socket = webSocket<BinanceCombinedStreamMessage>({
+      const socket: WebSocketSubject<BinanceCombinedStreamMessage> = webSocket({
         url: buildBinanceCombinedStreamUrl(WATCHLIST_SYMBOLS),
       });
 
-      return this.socket.pipe(
+      return socket.pipe(
         map((message) => parseBinanceTicker(message)),
         filter((frame): frame is MarketFeedFrame => frame !== null),
+        finalize(() => socket.complete()),
       );
-    }).pipe(
-      share(),
-      finalize(() => this.closeSocket()),
-    );
-  }
-
-  private closeSocket(): void {
-    if (this.socket) {
-      this.socket.complete();
-      this.socket = null;
-    }
+    }).pipe(share());
   }
 }
