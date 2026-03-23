@@ -26,4 +26,13 @@ describe('parseBinanceTicker', () => {
       parseBinanceTicker({ stream: 'x', data: { e: '', s: '', c: '', P: '', v: '' } }),
     ).toBeNull();
   });
+
+  it('returns null for non-finite prices', () => {
+    expect(
+      parseBinanceTicker({
+        stream: 'btcusdt@ticker',
+        data: { e: '24hrTicker', s: 'BTCUSDT', c: 'NaN', P: '1', v: '1' },
+      }),
+    ).toBeNull();
+  });
 });
