@@ -23,6 +23,8 @@ export class DemoStreamService implements MarketFeed {
   private tickCount = 0;
 
   stream$(): Observable<MarketFeedFrame> {
+    this.tickCount = 0;
+
     return interval(800).pipe(
       map(() => {
         this.tickCount += 1;
