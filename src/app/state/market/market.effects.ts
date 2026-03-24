@@ -27,7 +27,7 @@ export class MarketEffects {
   private readonly depthFeed = inject(DEPTH_FEED);
   private readonly feedMode = inject(FEED_MODE);
 
-  /** Dispatched when the market-watch route loads. */
+  /** Dispatched when the authenticated shell loads. */
   connectInit$ = createEffect(() =>
     this.actions$.pipe(
       ofType(MarketActions.connect),
@@ -39,7 +39,7 @@ export class MarketEffects {
     ),
   );
 
-  /** Tear down feed when leaving market-watch. */
+  /** Tear down feed when leaving the authenticated shell. */
   disconnect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(MarketActions.disconnect),
@@ -103,13 +103,28 @@ export class MarketEffects {
       ofType(MarketActions.connectDepth),
       switchMap(() => {
         const disconnect$ = this.actions$.pipe(ofType(MarketActions.disconnectDepth));
+        let retryAttempt = 0;
 
         return this.store.select(selectSelectedSymbol).pipe(
           distinctUntilChanged(),
           switchMap((symbol) =>
-            this.depthFeed
-              .stream$(symbol)
-              .pipe(map(({ bids, asks }) => MarketActions.depthUpdated({ symbol, bids, asks }))),
+            this.depthFeed.stream$(symbol).pipe(
+              tap(() => {
+                retryAttempt = 0;
+              }),
+              map(({ bids, asks }) => MarketActions.depthUpdated({ symbol, bids, asks })),
+              catchError((error, caught) => {
+                retryAttempt += 1;
+                const delayMs = connectionBackoffMs(retryAttempt - 1);
+
+                if (retryAttempt > 8) {
+                  console.error('[DepthFeed] max reconnect attempts reached', error);
+                  return from([]);
+                }
+
+                return timer(delayMs).pipe(switchMap(() => caught));
+              }),
+            ),
           ),
           takeUntil(disconnect$),
         );
