@@ -1,6 +1,7 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideMockStore } from '@ngrx/store/testing';
 
 jest.mock('./core/firebase/auth.service', () => {
   const { MockAuthService } = jest.requireActual<
@@ -10,6 +11,7 @@ jest.mock('./core/firebase/auth.service', () => {
 });
 
 import { AuthService } from './core/firebase/auth.service';
+import { mockAppState } from './state/testing/mock-app-state';
 import ShellComponent from './shell.component';
 
 describe('ShellComponent', () => {
@@ -18,7 +20,12 @@ describe('ShellComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ShellComponent],
-      providers: [provideZonelessChangeDetection(), provideRouter([]), AuthService],
+      providers: [
+        provideZonelessChangeDetection(),
+        provideRouter([]),
+        provideMockStore({ initialState: mockAppState }),
+        AuthService,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ShellComponent);
