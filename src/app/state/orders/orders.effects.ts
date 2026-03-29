@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { from, of } from 'rxjs';
-import { catchError, exhaustMap, ignoreElements, map } from 'rxjs/operators';
+import { catchError, concatMap, exhaustMap, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 import { generateCiSeedOrders } from '../../core/orders/ci-seed-orders';
@@ -33,9 +33,9 @@ export class OrdersEffects {
   persistOrder$ = createEffect(() =>
     this.actions$.pipe(
       ofType(OrdersActions.orderPlaced),
-      exhaustMap(({ order }) =>
+      concatMap(({ order }) =>
         from(this.ordersRepo.placeOrder(order)).pipe(
-          ignoreElements(),
+          map(() => OrdersActions.orderPersisted({ orderId: order.id })),
           catchError((error: unknown) =>
             of(
               OrdersActions.orderFailed({
