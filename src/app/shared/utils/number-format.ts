@@ -2,7 +2,7 @@ export function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-export function formatMoney(value: number): string {
+function formatMoney(value: number): string {
   return roundMoney(value).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -37,4 +37,8 @@ export function formatOptionalPrice(value: number | undefined): string {
 export function formatPct(pct: number): string {
   const sign = pct >= 0 ? '+' : '';
   return `${sign}${pct.toFixed(2)}%`;
+}
+
+export function formatOptionalPct(pct: number | undefined | null): string {
+  return pct == null ? '—' : formatPct(pct);
 }
