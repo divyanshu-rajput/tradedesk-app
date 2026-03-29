@@ -1,3 +1,4 @@
+import { isFiniteNumber } from '../../shared/utils/finite.util';
 import type { MarketFeedFrame } from './market-feed.token';
 
 /** Binance combined-stream envelope for @ticker streams. */
@@ -20,10 +21,18 @@ export function parseBinanceTicker(message: BinanceCombinedStreamMessage): Marke
     return null;
   }
 
+  const price = Number.parseFloat(data.c);
+  const changePct = Number.parseFloat(data.P ?? '0');
+  const volume = Number.parseFloat(data.v ?? '0');
+
+  if (!isFiniteNumber(price) || !isFiniteNumber(changePct) || !isFiniteNumber(volume)) {
+    return null;
+  }
+
   return {
     symbol: data.s,
-    price: Number.parseFloat(data.c),
-    changePct: Number.parseFloat(data.P ?? '0'),
-    volume: Number.parseFloat(data.v ?? '0'),
+    price,
+    changePct,
+    volume,
   };
 }
