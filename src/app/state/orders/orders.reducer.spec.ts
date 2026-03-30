@@ -2,7 +2,7 @@ import { OrdersActions } from './orders.actions';
 import { initialOrdersState, ordersReducer } from './orders.reducer';
 
 describe('ordersReducer', () => {
-  it('adds order on orderPlaced', () => {
+  it('adds order on orderPlaced and keeps submitting until persist', () => {
     const order = {
       id: '1',
       symbol: 'BTCUSDT',
@@ -18,9 +18,19 @@ describe('ordersReducer', () => {
       OrdersActions.orderPlaced({ order }),
     );
 
-    expect(state.submitting).toBe(false);
+    expect(state.submitting).toBe(true);
     expect(state.ids).toEqual(['1']);
     expect(state.entities['1']).toEqual(order);
+  });
+
+  it('clears submitting on orderPersisted', () => {
+    const state = ordersReducer(
+      { ...initialOrdersState, submitting: true },
+      OrdersActions.orderPersisted({ orderId: '1' }),
+    );
+
+    expect(state.submitting).toBe(false);
+    expect(state.lastError).toBeNull();
   });
 
   it('stores error on orderFailed', () => {
@@ -44,7 +54,10 @@ describe('ordersReducer', () => {
       createdAt: 100,
     };
 
-    const placed = ordersReducer(initialOrdersState, OrdersActions.orderPlaced({ order }));
+    const placed = ordersReducer(
+      { ...initialOrdersState, submitting: true },
+      OrdersActions.orderPlaced({ order }),
+    );
     const failed = ordersReducer(
       placed,
       OrdersActions.orderFailed({ error: 'Persist failed', orderId: 'rollback-1' }),
@@ -53,9 +66,10 @@ describe('ordersReducer', () => {
     expect(failed.ids).toEqual([]);
     expect(failed.entities['rollback-1']).toBeUndefined();
     expect(failed.lastError).toBe('Persist failed');
+    expect(failed.submitting).toBe(false);
   });
 
-  it('merges hydrated orders without removing optimistic local orders', () => {
+  it('replaces entities on ordersHydrated', () => {
     const localOrder = {
       id: 'local-1',
       symbol: 'BTCUSDT',
@@ -77,13 +91,33 @@ describe('ordersReducer', () => {
     };
 
     const placed = ordersReducer(
-      initialOrdersState,
+      { ...initialOrdersState, submitting: true },
       OrdersActions.orderPlaced({ order: localOrder }),
     );
     const hydrated = ordersReducer(placed, OrdersActions.ordersHydrated({ orders: [remoteOrder] }));
 
-    expect(hydrated.ids).toEqual(['local-1', 'remote-1']);
-    expect(hydrated.entities['local-1']).toEqual(localOrder);
+    expect(hydrated.ids).toEqual(['remote-1']);
+    expect(hydrated.entities['local-1']).toBeUndefined();
     expect(hydrated.entities['remote-1']).toEqual(remoteOrder);
+    expect(hydrated.submitting).toBe(false);
+  });
+
+  it('resets to initial state', () => {
+    const placed = ordersReducer(
+      { ...initialOrdersState, submitting: true, lastError: 'x' },
+      OrdersActions.orderPlaced({
+        order: {
+          id: '1',
+          symbol: 'BTCUSDT',
+          side: 'buy',
+          type: 'market',
+          qty: 1,
+          status: 'simulated',
+          createdAt: 1,
+        },
+      }),
+    );
+
+    expect(ordersReducer(placed, OrdersActions.reset())).toEqual(initialOrdersState);
   });
 });
