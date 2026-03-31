@@ -14,4 +14,16 @@ describe('portfolioReducer', () => {
     expect(next.cash).toBe(50_000);
     expect(next.holdings).toHaveLength(1);
   });
+
+  it('resets to initial state', () => {
+    const loaded = portfolioReducer(
+      initialPortfolioState,
+      PortfolioActions.snapshotLoaded({
+        cash: 50_000,
+        holdings: [{ symbol: 'BTCUSDT', qty: 1, avgCost: 60_000 }],
+      }),
+    );
+
+    expect(portfolioReducer(loaded, PortfolioActions.reset())).toEqual(initialPortfolioState);
+  });
 });
