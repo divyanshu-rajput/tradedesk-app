@@ -38,16 +38,11 @@ export default class ChartsComponent implements OnInit {
 
   ngOnInit(): void {
     this.symbolControl.setValue(this.selectedSymbol(), { emitEvent: false });
-    this.store.dispatch(MarketActions.connect());
 
     this.symbolControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((symbol) => {
         this.store.dispatch(MarketActions.symbolSelected({ symbol }));
       });
-
-    this.destroyRef.onDestroy(() => {
-      this.store.dispatch(MarketActions.disconnect());
-    });
   }
 }
