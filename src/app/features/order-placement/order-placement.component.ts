@@ -56,8 +56,11 @@ export default class OrderPlacementComponent {
   );
 
   private wasSubmitting = false;
+  private successTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
+    this.destroyRef.onDestroy(() => this.clearSuccessTimeout());
+
     this.form.controls.orderType.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
@@ -70,11 +73,16 @@ export default class OrderPlacementComponent {
 
       if (this.wasSubmitting && !submitting && !error) {
         this.successMessage.set('Order placed successfully.');
-        setTimeout(() => this.successMessage.set(null), 4_000);
+        this.clearSuccessTimeout();
+        this.successTimeoutId = setTimeout(() => this.successMessage.set(null), 4_000);
       }
 
       this.wasSubmitting = submitting;
     });
+  }
+
+  toIso(ms: number): string {
+    return new Date(ms).toISOString();
   }
 
   submit(): void {
@@ -98,5 +106,12 @@ export default class OrderPlacementComponent {
         },
       }),
     );
+  }
+
+  private clearSuccessTimeout(): void {
+    if (this.successTimeoutId != null) {
+      clearTimeout(this.successTimeoutId);
+      this.successTimeoutId = null;
+    }
   }
 }
