@@ -26,9 +26,13 @@ export const ordersReducer = createReducer(
   })),
   on(OrdersActions.orderPlaced, (state, { order }) => ({
     ...state,
-    submitting: false,
     entities: { ...state.entities, [order.id]: order },
     ids: [order.id, ...state.ids],
+  })),
+  on(OrdersActions.orderPersisted, (state) => ({
+    ...state,
+    submitting: false,
+    lastError: null,
   })),
   on(OrdersActions.orderFailed, (state, { error, orderId }) => {
     if (!orderId) {
@@ -49,19 +53,17 @@ export const ordersReducer = createReducer(
       ids: state.ids.filter((id) => id !== orderId),
     };
   }),
-  on(OrdersActions.ordersHydrated, (state, { orders }) => {
-    const entities = { ...state.entities };
-    const idSet = new Set(state.ids);
-
+  on(OrdersActions.ordersHydrated, (_state, { orders }) => {
+    const entities: Record<string, Order> = {};
     for (const order of orders) {
       entities[order.id] = order;
-      idSet.add(order.id);
     }
 
-    const ids = [...idSet].sort(
+    const ids = [...orders.map((order) => order.id)].sort(
       (a, b) => (entities[b]?.createdAt ?? 0) - (entities[a]?.createdAt ?? 0),
     );
 
-    return { ...state, entities, ids };
+    return { ...initialOrdersState, entities, ids };
   }),
+  on(OrdersActions.reset, () => initialOrdersState),
 );
