@@ -1,5 +1,5 @@
 import { UpperCasePipe } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,7 +8,6 @@ import {
   inject,
   viewChild,
 } from '@angular/core';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Store } from '@ngrx/store';
 
 import type { Order } from '../../shared/models/order.model';
@@ -56,6 +55,10 @@ export class OrderHistoryListComponent {
       }
       this.previousCount = count;
     });
+  }
+
+  toIso(ms: number): string {
+    return new Date(ms).toISOString();
   }
 
   trackById(_index: number, order: Order): string {
