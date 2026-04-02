@@ -7,5 +7,6 @@ export const PortfolioActions = createActionGroup({
   events: {
     'Load Snapshot': emptyProps(),
     'Snapshot Loaded': props<{ cash: number; holdings: Holding[] }>(),
+    Reset: emptyProps(),
   },
 });
