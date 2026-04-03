@@ -21,4 +21,5 @@ export const portfolioReducer = createReducer(
     cash,
     holdings,
   })),
+  on(PortfolioActions.reset, () => initialPortfolioState),
 );
