@@ -8,10 +8,10 @@
   </td>
   <td
     class="watchlist-row__cell watchlist-row__cell--change watchlist-row__cell--numeric"
-    [class.watchlist-row__cell--up]="(tick()?.changePct ?? 0) >= 0"
-    [class.watchlist-row__cell--down]="(tick()?.changePct ?? 0) < 0"
+    [class.watchlist-row__cell--up]="tick() != null && tick()!.changePct >= 0"
+    [class.watchlist-row__cell--down]="tick() != null && tick()!.changePct < 0"
   >
-    {{ formatChange(tick()?.changePct) }}
+    {{ formatPct(tick()?.changePct) }}
   </td>
   <td class="watchlist-row__cell watchlist-row__cell--volume watchlist-row__cell--numeric">
     {{ formatVolume(tick()?.volume) }}
