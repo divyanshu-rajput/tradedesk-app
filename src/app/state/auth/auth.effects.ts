@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { createEffect } from '@ngrx/effects';
-import { filter, mergeMap, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, mergeMap } from 'rxjs/operators';
 
 import { AuthService } from '../../core/firebase/auth.service';
 import { OrdersActions } from '../orders/orders.actions';
@@ -11,12 +11,25 @@ import { PortfolioActions } from '../portfolio/portfolio.actions';
 export class AuthEffects {
   private readonly authService = inject(AuthService);
 
-  /** Hydrate persisted slices once a Firebase user is available. */
-  hydrateOnAuth$ = createEffect(() =>
+  /**
+   * On logout or uid change: clear orders/portfolio.
+   * When a user is present, hydrate from Firestore after the reset.
+   */
+  syncOnAuth$ = createEffect(() =>
     toObservable(this.authService.user).pipe(
-      filter((user) => user != null),
       distinctUntilChanged((prev, next) => prev?.uid === next?.uid),
-      mergeMap(() => [OrdersActions.loadOrders(), PortfolioActions.loadSnapshot()]),
+      mergeMap((user) => {
+        if (user == null) {
+          return [OrdersActions.reset(), PortfolioActions.reset()];
+        }
+
+        return [
+          OrdersActions.reset(),
+          PortfolioActions.reset(),
+          OrdersActions.loadOrders(),
+          PortfolioActions.loadSnapshot(),
+        ];
+      }),
     ),
   );
 }
