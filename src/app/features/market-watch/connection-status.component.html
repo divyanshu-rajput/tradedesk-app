@@ -1,1 +1,5 @@
-<span [class]="statusClass()">{{ label() }}</span>
+@if (canRetry()) {
+  <button type="button" [class]="statusClass()" (click)="retry()">{{ label() }}</button>
+} @else {
+  <span [class]="statusClass()">{{ label() }}</span>
+}
