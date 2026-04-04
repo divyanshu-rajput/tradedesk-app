@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 
+import { MarketActions } from '../../state/market/market.actions';
 import { selectConnectionStatus } from '../../state/market/market.selectors';
 
 @Component({
@@ -24,10 +25,21 @@ export class ConnectionStatusComponent {
         return 'Connecting';
       case 'reconnecting':
         return 'Reconnecting';
+      case 'closed':
+        return 'Offline — retry';
       default:
         return 'Offline';
     }
   });
 
+  readonly canRetry = computed(() => this.status() === 'closed');
+
   readonly statusClass = computed(() => `connection-status connection-status--${this.status()}`);
+
+  retry(): void {
+    if (!this.canRetry()) {
+      return;
+    }
+    this.store.dispatch(MarketActions.connect());
+  }
 }
