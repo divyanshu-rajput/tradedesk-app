@@ -125,7 +125,7 @@
                   · stop {{ order.stopPrice }}
                 }
               </span>
-              <time class="order-placement__recent-time" [dateTime]="order.createdAt.toString()">
+              <time class="order-placement__recent-time" [dateTime]="toIso(order.createdAt)">
                 {{ formatDateTime(order.createdAt) }}
               </time>
             </li>
