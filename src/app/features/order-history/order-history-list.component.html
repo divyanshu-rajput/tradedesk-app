@@ -21,7 +21,7 @@
       >
         <time
           class="order-history-list__cell order-history-list__time"
-          [dateTime]="order.createdAt.toString()"
+          [dateTime]="toIso(order.createdAt)"
         >
           {{ formatTime(order.createdAt) }}
         </time>
