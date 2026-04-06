@@ -12,7 +12,7 @@ import {
 
 import type { Order } from '../../shared/models/order.model';
 import { AuthService } from './auth.service';
-import { orderConverter } from './order.converter';
+import { orderConverter, parseOrderDoc } from './order.converter';
 
 @Injectable({ providedIn: 'root' })
 export class OrdersRepository {
@@ -29,12 +29,12 @@ export class OrdersRepository {
 
   async loadOrders(max = 1_000): Promise<Order[]> {
     const uid = await this.requireUid();
-    const ordersRef = collection(this.firestore, `users/${uid}/orders`).withConverter(
-      orderConverter,
-    );
+    const ordersRef = collection(this.firestore, `users/${uid}/orders`);
     const ordersQuery = query(ordersRef, orderBy('createdAt', 'desc'), limit(max));
     const snapshot = await getDocs(ordersQuery);
-    return snapshot.docs.map((document) => document.data());
+    return snapshot.docs
+      .map((document) => parseOrderDoc(document.id, document.data() as Record<string, unknown>))
+      .filter((order): order is Order => order !== null);
   }
 
   private async requireUid(): Promise<string> {
