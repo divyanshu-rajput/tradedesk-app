@@ -9,9 +9,8 @@ import {
 } from '@angular/core';
 import { extent } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
-import { pointer } from 'd3-selection';
+import { pointer, select } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
-import { select } from 'd3-selection';
 import { curveMonotoneX, line } from 'd3-shape';
 
 import { formatPrice } from '../../shared/utils/number-format';
@@ -79,8 +78,9 @@ export class PriceLineChartComponent {
       .attr('transform', `translate(${this.margin.left},${this.margin.top})`);
 
     const plot = svg.select<SVGGElement>('g.price-line-chart__plot');
+    const finitePrices = prices.filter((value) => Number.isFinite(value));
 
-    if (prices.length < 2) {
+    if (finitePrices.length < 2) {
       plot.selectAll('*').remove();
       plot
         .append('text')
@@ -97,10 +97,23 @@ export class PriceLineChartComponent {
     plot.selectAll('*').remove();
 
     const x = scaleLinear()
-      .domain([0, prices.length - 1])
+      .domain([0, finitePrices.length - 1])
       .range([0, innerW]);
-    const yExtent = extent(prices) as [number, number];
-    const y = scaleLinear().domain(yExtent).nice().range([innerH, 0]);
+    const yExtent = extent(finitePrices);
+    const min = yExtent[0];
+    const max = yExtent[1];
+    if (min == null || max == null) {
+      return;
+    }
+
+    const padded =
+      min === max
+        ? ([min - Math.max(Math.abs(min) * 0.001, 1), max + Math.max(Math.abs(max) * 0.001, 1)] as [
+            number,
+            number,
+          ])
+        : ([min, max] as [number, number]);
+    const y = scaleLinear().domain(padded).nice().range([innerH, 0]);
 
     plot
       .append('g')
@@ -121,8 +134,8 @@ export class PriceLineChartComponent {
       .attr('transform', `translate(0,${innerH})`)
       .call(
         axisBottom(x)
-          .ticks(Math.min(5, prices.length))
-          .tickFormat((value) => this.formatXTick(Number(value), prices.length)),
+          .ticks(Math.min(5, finitePrices.length))
+          .tickFormat((value) => this.formatXTick(Number(value), finitePrices.length)),
       )
       .call((g) => g.select('.domain').attr('stroke', '#334155'))
       .call((g) => g.selectAll('.tick line').attr('stroke', '#334155'))
@@ -151,7 +164,7 @@ export class PriceLineChartComponent {
       .attr('fill', 'none')
       .attr('stroke', '#22c55e')
       .attr('stroke-width', 2)
-      .attr('d', lineGen(prices) ?? '');
+      .attr('d', lineGen(finitePrices) ?? '');
 
     const focus = plot
       .append('circle')
@@ -173,8 +186,8 @@ export class PriceLineChartComponent {
       .on('mousemove', (event) => {
         const [mouseX] = pointer(event);
         const index = Math.round(x.invert(mouseX));
-        const clamped = Math.max(0, Math.min(prices.length - 1, index));
-        const price = prices[clamped] ?? 0;
+        const clamped = Math.max(0, Math.min(finitePrices.length - 1, index));
+        const price = finitePrices[clamped] ?? 0;
 
         focus.attr('cx', x(clamped)).attr('cy', y(price)).style('opacity', 1);
 
