@@ -1,7 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { formatCurrency, formatHoldingQty, formatPct } from '../../shared/utils/number-format';
+import {
+  formatCurrency,
+  formatHoldingQty,
+  formatPct,
+  formatPrice,
+} from '../../shared/utils/number-format';
 import { formatSymbolLabel } from '../../shared/utils/symbol-format';
 import { selectHoldingsWithPnl } from '../../state/portfolio/portfolio.selectors';
 
@@ -17,6 +22,7 @@ export class HoldingsTableComponent {
   readonly holdings = this.store.selectSignal(selectHoldingsWithPnl);
   readonly formatSymbol = formatSymbolLabel;
   readonly formatCurrency = formatCurrency;
+  readonly formatPrice = formatPrice;
   readonly formatHoldingQty = formatHoldingQty;
   readonly formatPct = formatPct;
 }
