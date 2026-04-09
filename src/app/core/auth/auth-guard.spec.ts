@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Router, UrlTree } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter, Router, UrlTree } from '@angular/router';
 
 jest.mock('../firebase/auth.service', () => ({
   AuthService: class MockAuthService {},
@@ -23,8 +22,7 @@ describe('authGuard', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      providers: [{ provide: AuthService, useValue: authService }],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authService }],
     });
 
     router = TestBed.inject(Router);
@@ -91,8 +89,7 @@ describe('redirectIfAuthenticatedGuard', () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      providers: [{ provide: AuthService, useValue: authService }],
+      providers: [provideRouter([]), { provide: AuthService, useValue: authService }],
     });
 
     router = TestBed.inject(Router);
