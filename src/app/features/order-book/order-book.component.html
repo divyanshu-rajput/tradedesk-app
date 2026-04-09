@@ -42,7 +42,7 @@
           </tr>
         </thead>
         <tbody class="order-book__table-body">
-          @for (level of depth()?.bids ?? []; track level[0]) {
+          @for (level of depth()?.bids ?? []; track $index) {
             <tr class="order-book__table-row">
               <td
                 class="order-book__table-cell order-book__table-cell--bid order-book__table-cell--numeric"
@@ -82,7 +82,7 @@
           </tr>
         </thead>
         <tbody class="order-book__table-body">
-          @for (level of depth()?.asks ?? []; track level[0]) {
+          @for (level of depth()?.asks ?? []; track $index) {
             <tr class="order-book__table-row">
               <td
                 class="order-book__table-cell order-book__table-cell--ask order-book__table-cell--numeric"
