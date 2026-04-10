@@ -26,7 +26,7 @@ This is not "build a UI" — it is "build a UI that stays responsive when ~10 sy
 ### In scope
 
 - 5 standalone, lazy-loaded feature areas: **Market Watch, Order Placement, Order Book, Portfolio, Charts** — plus **Order History** (CDK virtual scroll) surfaced within Portfolio/Orders.
-- NgRx store with 4 slices: `market`, `orders`, `portfolio`, `ui`.
+- NgRx store with 3 slices: `market`, `orders`, `portfolio`.
 - Live price feed via `rxjs/webSocket` to Binance public combined streams (~10 symbols), wrapped in an NgRx Effect.
 - Reconnect logic (`retry` with exponential backoff) and teardown (`takeUntilDestroyed`) scoped to leaving the route.
 - Per-symbol memoized selectors + OnPush + signals so only the updated row re-renders.
