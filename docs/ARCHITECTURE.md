@@ -17,7 +17,6 @@ flowchart LR
     Market["market"]
     Orders["orders"]
     Portfolio["portfolio"]
-    Ui["ui"]
   end
   Store --> store
   store -->|"selectSignal + memoized selectors"| Components["Standalone OnPush components (signals)"]
@@ -62,7 +61,6 @@ src/app/
     market/    { market.actions.ts, market.reducer.ts, market.selectors.ts, market.effects.ts }
     orders/    { ... }
     portfolio/ { ... }
-    ui/        { ... }
     index.ts                    # rootReducers, AppState type, provideStore wiring
   features/                     # lazy-loaded routes (one folder each)
     market-watch/
@@ -112,13 +110,6 @@ interface AppState {
     cash: number;
     holdings: { symbol: string; qty: number; avgCost: number }[];
     // P&L and allocation are NOT stored — derived via selectors against `market`
-  };
-  ui: {
-    activeRoute: string;
-    theme: 'dark' | 'light';
-    feedMode: 'live' | 'demo';
-    loading: Record<string, boolean>;
-    dialog: { kind: 'order-detail' | 'confirm' | null; payload?: unknown };
   };
 }
 ```
@@ -267,7 +258,7 @@ Rules:
 
 - A `MARKET_FEED` `InjectionToken` resolves to either `MarketSocketService` (live) or `DemoStreamService`
   (seeded, deterministic mock emitting realistic ticks on an interval).
-- Mode is driven by `ui.feedMode` and an environment/build configuration (`--configuration=demo`).
+- Mode is driven by an environment/build configuration (`--configuration=demo`) via `FEED_MODE`.
 - Lets the app demo with zero network dependency (interview-safe), and gives Playwright deterministic data.
 
 ---
