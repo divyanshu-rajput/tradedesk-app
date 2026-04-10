@@ -82,7 +82,7 @@ By the end of Phase 0 you should have:
 1. Upgrade Angular CLI from v18 → v20 globally; install Firebase CLI.
 2. `ng new tradedesk` — Angular 20, standalone, zoneless (`provideZonelessChangeDetection`), SCSS, strict TypeScript.
 3. Install all dependencies in one shot:
-   - `@ngrx/store`, `@ngrx/effects`, `@ngrx/entity`, `@ngrx/store-devtools`
+   - `@ngrx/store`, `@ngrx/effects`, `@ngrx/store-devtools`
    - `@angular/fire`, `firebase`
    - `d3`, `@types/d3`
    - `@angular/cdk`
@@ -94,7 +94,7 @@ By the end of Phase 0 you should have:
 6. Set up **commitlint** (conventional commits: `feat:`, `fix:`, etc.).
 7. Set up **Jest** with `jest-preset-angular` (delete the default Karma config).
 8. Set up **Playwright** (basic config, pointing at demo mode).
-9. **NgRx skeleton** — 4 empty slices (market, orders, portfolio, ui) with placeholder actions/reducers/selectors wired into `provideStore`.
+9. **NgRx skeleton** — 3 empty slices (market, orders, portfolio) with placeholder actions/reducers/selectors wired into `provideStore`.
 10. **6 lazy routes** — each feature route loaded with `loadComponent`, pointing at a `<feature>-root.component.ts` that shows a placeholder.
 11. **Full folder structure** created (core, shared, state, features as per `ARCHITECTURE.md`).
 12. **Environment files** — `environment.ts` and `environment.demo.ts` with Firebase config placeholders and `feedMode` flag.
