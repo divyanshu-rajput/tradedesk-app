@@ -31,8 +31,8 @@ package manager (do not hand-pick patch numbers).
 
 ### NgRx Store + Effects
 
-- **Why:** The interview-grade answer for large, shared, side-effect-heavy state. The 4-slice split
-  (`market`, `orders`, `portfolio`, `ui`) is the backbone of the app.
+- **Why:** The interview-grade answer for large, shared, side-effect-heavy state. The 3-slice split
+  (`market`, `orders`, `portfolio`) is the backbone of the app.
 - **How used:** Actions/reducers/selectors per slice; the live-price WebSocket lives in an **Effect**;
   cross-slice P&L computed via composed selectors; components read state via `store.selectSignal(...)`.
 - **Interview skill:** Redux pattern, effects for async orchestration, memoized/parameterized selectors,
