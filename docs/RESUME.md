@@ -9,7 +9,7 @@ interviewer will ask about each line and how to answer.
 
 **TradeDesk – Real-Time Trading Terminal** | Angular 20 (zoneless, signals), NgRx, RxJS, D3.js, Angular CDK, Firebase
 
-- Architected a five-feature standalone Angular 20 app (Market Watch, Order Placement, Order Book, Portfolio, Charts) with lazy-loaded routes, zoneless change detection, and an NgRx store split into `market`, `orders`, `portfolio`, and `ui` slices.
+- Architected a five-feature standalone Angular 20 app (Market Watch, Order Placement, Order Book, Portfolio, Charts) with lazy-loaded routes, zoneless change detection, and an NgRx store split into `market`, `orders`, and `portfolio` slices.
 - Streamed live prices for ~10 symbols from Binance's public WebSocket via `rxjs/webSocket` inside an NgRx Effect, with exponential-backoff `retry` for reconnection and `takeUntilDestroyed` for teardown on route change.
 - Cut re-renders under continuous price ticks using per-symbol memoized selectors bridged to signals (`selectSignal`) with OnPush, so only the updated row re-renders — verified via Angular DevTools render-count profiling.
 - Built a `priceFlash` attribute directive with `Renderer2` and the `animationend` event (no `setTimeout` magic numbers) to flash green/red on value change without coupling DOM mutation to component logic.
@@ -22,7 +22,7 @@ interviewer will ask about each line and how to answer.
 
 **TradeDesk – Real-Time Trading Terminal** | Angular 20, NgRx, RxJS, D3.js, Angular CDK, Firebase
 
-- Built a 5-module standalone, lazy-loaded Angular 20 app (zoneless + signals) with an NgRx store (`market`/`orders`/`portfolio`/`ui`) and a live Binance WebSocket feed wrapped in an Effect with backoff reconnection and route-scoped teardown.
+- Built a 5-module standalone, lazy-loaded Angular 20 app (zoneless + signals) with an NgRx store (`market`/`orders`/`portfolio`) and a live Binance WebSocket feed wrapped in an Effect with backoff reconnection and route-scoped teardown.
 - Kept the watchlist responsive under per-second ticks via per-symbol memoized selectors + OnPush, so only the changed row re-renders (verified by render-count profiling).
 - Wrote a `Renderer2`-based `priceFlash` directive and a Reactive Forms cross-field validator (conditional-required limit/stop-loss price); visualized allocation with a D3 pie chart and 1,000+ orders via CDK virtual scroll.
 - Integrated Firebase Auth + Firestore (security rules, optimistic order writes) and shipped via GitHub Actions CI/CD to Firebase Hosting with per-PR preview deploys.
