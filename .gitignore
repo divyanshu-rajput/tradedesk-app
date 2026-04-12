@@ -61,3 +61,7 @@ service-account*.json
 
 # Husky
 .husky/_
+
+# Local AI / assistant tooling
+.qodo/
+.cursor/

@@ -1,6 +1,6 @@
 import type { Holding } from '../../shared/models/holding.model';
 
-/** Demo portfolio seeded on first load (Phase 4). */
+/** Demo portfolio seeded on first load. */
 export const SEED_HOLDINGS: Holding[] = [
   { symbol: 'BTCUSDT', qty: 0.5, avgCost: 65_000 },
   { symbol: 'ETHUSDT', qty: 4, avgCost: 3_200 },
