@@ -72,7 +72,6 @@ npm run format       # Prettier
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)         | Folder structure, state shape, data-flow diagrams, key patterns          |
 | [`docs/BACKEND-FIREBASE.md`](docs/BACKEND-FIREBASE.md) | Firebase Auth + Firestore data model, security rules, persistence policy |
 | [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)             | Firebase Hosting + GitHub Actions CI/CD + preview channels               |
-| [`docs/RESUME.md`](docs/RESUME.md)                     | Polished resume bullets + interview talking-points cheat-sheet           |
 | [`docs/PHASES.md`](docs/PHASES.md)                     | Implementation phases and manual setup steps                             |
 
 ## Project Status
